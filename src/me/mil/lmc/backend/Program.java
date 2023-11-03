@@ -7,7 +7,7 @@ import me.mil.lmc.backend.exceptions.LMCRuntimeException;
 import java.util.*;
 
 public class Program {
-	enum RegisterType {
+	public enum RegisterType {
 		PROGRAM_COUNTER,
 		MEMORY_ADDRESS_REGISTER,
 		MEMORY_DATA_REGISTER,
@@ -159,7 +159,7 @@ public class Program {
 		String[] lines = str.split("\n");
 		List<Triplet<String, Instruction, String>> program = new ArrayList<>();
 		for(int i = 0; i < lines.length; i++) {
-			if(lines[i].replaceAll(" ", "").length()==0) continue; // check if isEmpty, but also include empty lines with spaces.
+			if(lines[i].replaceAll(" ", "").length() == 0) continue; // check if isEmpty, but also include empty lines with spaces.
 			if(lines[i].startsWith(" ")) lines[i] = lines[i].substring(1); // remove leading space, if it exists.
 			// separate into label, instruction, and parameter
 			String[] lineComponents = lines[i].split(" ");

@@ -11,44 +11,44 @@ import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 public enum Instruction {
-	ADD("1XX", ((state, input) -> {
+	ADD("1XX", ((state, input) -> { // Add the input to the accumulator
 		return state.setRegister(Program.RegisterType.ACCUMULATOR, state.getRegister(Program.RegisterType.ACCUMULATOR).getValue()+state.getValue(input));
 	})),
-	SUB("2XX", ((state, input) -> {
+	SUB("2XX", ((state, input) -> { // Subtract the input from the accumulator
 		return state.setRegister(Program.RegisterType.ACCUMULATOR, state.getRegister(Program.RegisterType.ACCUMULATOR).getValue()-state.getValue(input));
 	})),
-	STA("3XX", ((state, input) -> {
+	STA("3XX", ((state, input) -> { // Store the contents of the accumulator in RAM location 'input'
 		return state.setValue(input, state.getRegister(Program.RegisterType.ACCUMULATOR).getValue());
 	})),
-	LDA("5XX", ((state, input) -> {
+	LDA("5XX", ((state, input) -> { // Load the value from RAM location 'input' into the accumulator
 		return state.setRegister(Program.RegisterType.ACCUMULATOR, state.getValue(input));
 	})),
-	BRA("6XX", ((state, input) -> {
+	BRA("6XX", ((state, input) -> { // Set the Program Counter to 'input'
 		return state.setRegister(Program.RegisterType.PROGRAM_COUNTER, input);
 	})),
-	BRZ("7XX", ((state, input) -> {
+	BRZ("7XX", ((state, input) -> { // Set the Program Counter to 'input' if the accumulator is 0
 		if(state.getRegister(Program.RegisterType.ACCUMULATOR).getValue() == 0) return state.setRegister(Program.RegisterType.PROGRAM_COUNTER, input);
 		return state;
 	})),
-	BRP("8XX", ((state, input) -> {
+	BRP("8XX", ((state, input) -> {// Set the Program Counter to 'input' if the accumulator is greater than or equal to 0
 		if(state.getRegister(Program.RegisterType.ACCUMULATOR).getValue() >= 0) return state.setRegister(Program.RegisterType.PROGRAM_COUNTER, input);
 		return state;
 	})),
-	INP("901", ((state, input) -> { // TODO UI Input
+	INP("901", ((state, input) -> { // Fetch a value from the user into the accumulator // TODO UI Input
 		System.out.print("Awaiting Integer Input: ");
 		return state.setRegister(Program.RegisterType.ACCUMULATOR, Integer.parseInt(new Scanner(System.in).nextLine()));
 	})),
-	OUT("902", ((state, input) -> { // TODO UI Output
+	OUT("902", ((state, input) -> { // Output the value in the accumulator // TODO UI Output
 		System.out.println("# Output: " + state.getRegister(Program.RegisterType.ACCUMULATOR).getValue());
 		return state;
 	})),
 	HLT("0", ((state, input) -> state.setHalting(true))),
 	DAT(null, null);
 
-	private String code;
-	private BiFunction<ProgramState, Integer, ProgramState> function;
+	private final String code;
+	private final BiFunction<ProgramState, Integer, ProgramState> function;
 
-	private Instruction(String code, BiFunction<ProgramState, Integer, ProgramState> function) {
+	Instruction(String code, BiFunction<ProgramState, Integer, ProgramState> function) {
 		this.code = code;
 		this.function = function;
 	}
