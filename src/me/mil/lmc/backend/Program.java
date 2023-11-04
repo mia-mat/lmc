@@ -5,6 +5,7 @@ import me.mil.lmc.backend.exceptions.LMCCompilationException;
 import me.mil.lmc.backend.exceptions.LMCRuntimeException;
 
 import java.util.*;
+import java.util.concurrent.Callable;
 
 public class Program {
 	public enum RegisterType {
@@ -105,27 +106,35 @@ public class Program {
 		}
 	}
 
+	public void run() throws Exception {
+		run(0);
+	}
+
 	/**
 	 * Resets the program, loads it into RAM, and runs it.
+	 * @param clockSpeed instructions per second
 	 */
-	public void run() throws LMCRuntimeException {
+	public void run(int clockSpeed) throws Exception {
 		reset();
 		load();
 		System.out.println("Attempting to run program...");
 
+		boolean respectClockSpeed = clockSpeed > 0;
+		int millisToWait = respectClockSpeed ? 1000/clockSpeed : 0;
+
 		do {
 			// Fetch
-			copyFromRegister(RegisterType.PROGRAM_COUNTER, RegisterType.MEMORY_ADDRESS_REGISTER); // Copy value of PC to MAR
-			setRegister(RegisterType.PROGRAM_COUNTER, getRegister(RegisterType.PROGRAM_COUNTER).getValue() + 1); // Increment Program Counter
-			copyFromRegister(RegisterType.MEMORY_ADDRESS_REGISTER, RegisterType.CURRENT_INSTRUCTION_REGISTER); // Copy value of MAR to CIR
+			performAndWait(() -> copyFromRegister(RegisterType.PROGRAM_COUNTER, RegisterType.MEMORY_ADDRESS_REGISTER), millisToWait); // Copy value of PC to MAR
+			performAndWait(() -> setRegister(RegisterType.PROGRAM_COUNTER, getRegister(RegisterType.PROGRAM_COUNTER).getValue() + 1), millisToWait); // Increment Program Counter
+			performAndWait(() -> copyFromRegister(RegisterType.MEMORY_ADDRESS_REGISTER, RegisterType.CURRENT_INSTRUCTION_REGISTER), millisToWait); // Copy value of MAR to CIR
 
 			// Decode
-			Pair<Instruction, Integer> instructionParameterPair = Instruction.fromCode(ram[getRegister(RegisterType.CURRENT_INSTRUCTION_REGISTER).getValue()]);
+			Pair<Instruction, Integer> instructionParameterPair = performAndWait(() -> Instruction.fromCode(ram[getRegister(RegisterType.CURRENT_INSTRUCTION_REGISTER).getValue()]), millisToWait);
 			Instruction instruction = instructionParameterPair.getA();
 			Integer parameter = instructionParameterPair.getB();
 
 			// Execute
-			ProgramState state = instruction.execute(generateProgramState(), parameter);
+			ProgramState state = performAndWait(() -> instruction.execute(generateProgramState(), parameter), millisToWait);
 			ram = state.getRam();
 			registers = state.getRegisters();
 			halting = state.isHalting();
@@ -133,7 +142,18 @@ public class Program {
 		} while (!halting);
 		System.out.println("Finished Executing Program.");
 
+		performAndWait(() -> 0, 1);
 
+	}
+
+	// util method for run();
+	private <T> T performAndWait(Callable<T> r, int millis) throws Exception {
+		T ret = r.call();
+		Thread.sleep(millis);
+		return ret;
+	}
+	private void performAndWait(Runnable r, int millis) throws Exception {
+		performAndWait(() -> {r.run(); return 0;}, millis);
 	}
 
 	public ProgramState generateProgramState() {
@@ -159,7 +179,7 @@ public class Program {
 		String[] lines = str.split("\n");
 		List<Triplet<String, Instruction, String>> program = new ArrayList<>();
 		for(int i = 0; i < lines.length; i++) {
-			if(lines[i].replaceAll(" ", "").length() == 0) continue; // check if isEmpty, but also include empty lines with spaces.
+			if(lines[i].replaceAll(" ", "").isEmpty()) continue; // check if isEmpty, but also include empty lines with spaces.
 			if(lines[i].startsWith(" ")) lines[i] = lines[i].substring(1); // remove leading space, if it exists.
 			// separate into label, instruction, and parameter
 			String[] lineComponents = lines[i].split(" ");

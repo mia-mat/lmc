@@ -9,7 +9,7 @@ import java.util.Scanner;
 
 public class LMC {
 
-	public static void main(String[] args) throws FileNotFoundException, LMCException {
+	public static void main(String[] args) throws Exception {
 		while(true) {
 			System.out.println("Provide the directory of a LMC program (.txt) to execute.");
 			Scanner scanner = new Scanner(System.in);
@@ -19,7 +19,7 @@ public class LMC {
 			while(fileScanner.hasNext()) str.append(fileScanner.nextLine()).append("\n");
 
 			Program program = Program.loadFromString(str.toString());
-			program.run();
+			program.run(100);
 
 			System.out.println("\n");
 		}
