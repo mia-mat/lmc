@@ -10,7 +10,7 @@ import me.mil.lmc.backend.exceptions.LMCRuntimeException;
 import java.io.OutputStream;
 import java.util.*;
 import java.util.concurrent.Callable;
-
+// todo refactor
 public class Program extends Observable {
 
 	private Register[] registers = new Register[RegisterType.values().length];

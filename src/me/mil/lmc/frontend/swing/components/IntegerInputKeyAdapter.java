@@ -1,19 +1,26 @@
 package me.mil.lmc.frontend.swing.components;
 
 import javax.swing.*;
+import javax.swing.text.DefaultEditorKit;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 
-public class IntegerInputKeyAdapter extends KeyAdapter { // todo respect caret position
+public class IntegerInputKeyAdapter extends KeyAdapter {
+
+	public static final int NO_LIMIT = -1;
 
 	private final JTextField field;
-	private final int limit; // -1 -> no limit
+	private final int limit; // -1 = no limit
 	private final int emptyValue;
 
 	public IntegerInputKeyAdapter(JTextField field, int charLimit, int emptyValue) {
 		this.field = field;
 		this.limit = charLimit;
 		this.emptyValue = emptyValue;
+
+		// disable method of getting around the filters (and other annoying things)
+		disableAction(DefaultEditorKit.pasteAction);
+		disableAction(DefaultEditorKit.beepAction);
 	}
 
 	public IntegerInputKeyAdapter(JTextField field, int charLimit) {
@@ -21,7 +28,7 @@ public class IntegerInputKeyAdapter extends KeyAdapter { // todo respect caret p
 	}
 
 	public IntegerInputKeyAdapter(JTextField field) {
-		this(field, -1, 0);
+		this(field, NO_LIMIT, 0);
 	}
 
 	public JTextField getField() {
@@ -29,27 +36,30 @@ public class IntegerInputKeyAdapter extends KeyAdapter { // todo respect caret p
 	}
 
 	@Override
-	public void keyTyped(KeyEvent e) { // todo bug: 100, bksp -> 0. should be 10
+	public void keyTyped(KeyEvent e) {
 		e.consume(); // don't pass on
 		char keyChar = e.getKeyChar();
-
-		if((keyChar < '0' || keyChar > '9') && keyChar != KeyEvent.VK_BACK_SPACE) return; // accept only 1-9 and backspace
-
 		String text = field.getText();
-		String newText = "";
-		if(keyChar == KeyEvent.VK_BACK_SPACE) {
-			if(!text.isEmpty()) newText = text.substring(0, text.length()-1);
-		}else newText = text + keyChar;
 
-		if(newText.isEmpty()) { // set to emptyValue if empty
-			field.setText("" + emptyValue);
-			newText="" + emptyValue;
-		}
+		if (text.isEmpty()) field.setText(String.valueOf(emptyValue));
 
-		if(limit > -1 && newText.length() > limit) return; // limit num of chars.
+		if ((keyChar < '0' || keyChar > '9')) return; // accept only 1-9 and backspace
 
-		field.setText(Integer.parseInt(newText) + ""); // Remove leading 0's and set newText as text.
+		// Add input with respect to caret position (and length of selection)
+		String newText = text.substring(0, field.getSelectionStart()) + keyChar + text.substring(field.getSelectionEnd());
+
+		if (limit != NO_LIMIT && newText.length() > limit) return; // limit num of chars.
+
+		int newCaretPosition = field.getSelectionStart() + 1; // calculate new caret position before modifying text
+
+		field.setText(String.valueOf(Integer.parseInt(newText))); // parseInt to remove leading 0s.
+
+		field.setSelectionStart(newCaretPosition);
+		field.setSelectionEnd(newCaretPosition);
 	}
 
 
+	private void disableAction(String actionKey) {
+		field.getActionMap().get(actionKey).setEnabled(false);
+	}
 }

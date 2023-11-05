@@ -9,7 +9,7 @@ import java.io.PrintStream;
 
 public final class OutputPanel extends LMCSubPanel {
 
-	private JTextArea outputTextArea;//todo
+	private JTextArea outputTextArea;
 
 	public OutputPanel(LMCInterface lmcInterface) {
 		super(lmcInterface);

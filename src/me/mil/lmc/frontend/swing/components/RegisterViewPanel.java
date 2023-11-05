@@ -67,7 +67,7 @@ public final class RegisterViewPanel extends LMCSubPanel {
 		}
 
 		public void setValueLabelText(int newText) {
-			valueLabel.setText(InterfaceUtils.padInteger(newText, '0', 3));
+			valueLabel.setText(InterfaceUtils.padInteger(newText));
 			valueLabel.paintImmediately(valueLabel.getVisibleRect()); // refresh
 		}
 	}

@@ -98,7 +98,7 @@ public final class MemoryViewPanel extends LMCSubPanel {
 			panelID.setPreferredSize(new Dimension(50, 20));
 			panelID.setSize(panelID.getPreferredSize());
 
-			JLabel labelID = new JLabel(InterfaceUtils.padInteger(id, '0', 3));
+			JLabel labelID = new JLabel(InterfaceUtils.padInteger(id));
 
 			labelID.setForeground(StyleUtil.COLOR_MEMORY_UNIT_ID_FOREGROUND);
 			panelID.add(labelID, new GridBagConstraints()); // Places label centred in both axes
@@ -122,7 +122,7 @@ public final class MemoryViewPanel extends LMCSubPanel {
 
 		public void setOpCode(int newOpCode) {
 			String oldText = labelOpCode.getText();
-			labelOpCode.setText(InterfaceUtils.padInteger(newOpCode, '0', 3));
+			labelOpCode.setText(InterfaceUtils.padInteger(newOpCode));
 			if(!Objects.equals(oldText, labelOpCode.getText())){
 				playUpdateAnimation();
 

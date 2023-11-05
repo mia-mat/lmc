@@ -22,7 +22,11 @@ public class InterfaceUtils {
 	}
 
 	public static String padInteger(int input, char ch, int length) {
-		return String.format("%" + ch + length + "d", input);
+		return ((input<0) ? "-" : "") + String.format("%" + ch + length + "d", Math.abs(input));
+	}
+
+	public static String padInteger(int input) { // Default values
+		return padInteger(input, '0', 3);
 	}
 
 }
