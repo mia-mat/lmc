@@ -6,8 +6,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.function.BiConsumer;
-import java.util.function.BiFunction;
-import java.util.function.Consumer;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
@@ -43,14 +41,14 @@ public enum Instruction {
 	DAT(null, null);
 
 	private final String code;
-	private final BiConsumer<IProcessor, Integer> function;
+	private final BiConsumer<Processor, Integer> function;
 
-	Instruction(String code, BiConsumer<IProcessor, Integer> function) {
+	Instruction(String code, BiConsumer<Processor, Integer> function) {
 		this.code = code;
 		this.function = function;
 	}
 
-	public void execute(IProcessor processor, Integer parameter) {
+	public void execute(Processor processor, Integer parameter) {
 			function.accept(processor, parameter);
 	}
 

@@ -4,7 +4,7 @@ import me.mil.lmc.LMCReader;
 import me.mil.lmc.LMCWriter;
 import me.mil.lmc.backend.exceptions.LMCRuntimeException;
 
-public interface IProcessor {
+public interface Processor {
 
 	void clearMemory();
 

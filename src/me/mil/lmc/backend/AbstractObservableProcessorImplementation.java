@@ -9,23 +9,28 @@ import java.util.*;
 public abstract class AbstractObservableProcessorImplementation extends AbstractObservableProcessor {
 
 	// todo cleanup
-	private int clockSpeed;
-	private boolean halting;
-	private Map<String, Integer> labels;
-	private MemorySlot[] memory;
-	private int memorySize;
-	private List<Observer> observers;
-	private LMCReader reader;
-	private Register[] registers;
-	private boolean running;
 	private LMCWriter writer;
+	private LMCReader reader;
 
+	private int clockSpeed;
+	private int memorySize;
+
+	private MemorySlot[] memory;
+	private Register[] registers;
+
+	private final List<Observer> observers;
+	private final Map<String, Integer> labels;
 	ProcessorInstruction[] instructions;
 
-	protected AbstractObservableProcessorImplementation(ProcessorInstruction[] instructions, int memorySize, int clockSpeed, LMCReader reader, LMCWriter writer) {
-		this.observers = new ArrayList<>();
+	private boolean halting;
+	private boolean running;
 
-		this.instructions = instructions;
+	protected AbstractObservableProcessorImplementation(ProcessorInstruction[] instructions, int memorySize, int clockSpeed, LMCReader reader, LMCWriter writer) {
+		this.reader = reader;
+		this.writer = writer;
+
+		this.clockSpeed = clockSpeed;
+
 		this.memorySize = memorySize;
 		this.memory = new MemorySlot[this.memorySize];
 		clearMemory();
@@ -33,14 +38,78 @@ public abstract class AbstractObservableProcessorImplementation extends Abstract
 		this.registers = new Register[RegisterType.values().length];
 		clearRegisters();
 
-		labels = new HashMap<>();
-
-		this.clockSpeed = clockSpeed;
-		this.reader = reader;
-		this.writer = writer;
+		this.observers = new ArrayList<>();
+		this.labels = new HashMap<>();
+		this.instructions = instructions;
 
 		this.running = false;
 		this.halting = false;
+	}
+
+
+	@Override
+	public void run() {
+		setHalting(false);
+		setRunning(true);
+		while (!halting) {
+			fetchInstructions();
+			executeInstructions(decodeInstructions());
+		}
+		setRunning(false);
+		setHalting(false);
+	}
+
+	@Override
+	public void loadInstructionsIntoMemory() throws LMCRuntimeException {
+		System.out.println("Loading instructions into memory");
+		for (int i = 0; i < instructions.length * 2; i++) {
+			int correctedI = i < instructions.length ? i : i - instructions.length;
+			Instruction instruction = instructions[correctedI].getInstruction();
+			String label = instructions[correctedI].getLabel();
+			String parameter = instructions[correctedI].getParameter();
+
+
+			// init all the DAT instructions first, so that they can be used, even if they're not chronologically defined.
+			if (i < instructions.length) { // search only DAT
+				if (instruction.equals(Instruction.DAT)) {
+					if (parameter != null) {
+						setMemorySlot(i, getMaybeLabelledMemorySlotID(parameter));
+					}
+				}
+			}
+
+			if (i >= instructions.length) { // search only non-DAT.
+				if (instruction.equals(Instruction.DAT)) continue;
+				int code = instruction.requiresParameter()
+						? instruction.getCode(getMaybeLabelledMemorySlotID(parameter))
+						: instruction.getCode();
+				setMemorySlot(correctedI, code);
+			}
+
+			if (label != null) {
+				labels.put(label, correctedI);
+			}
+		}
+
+		notifyObservers(new ProcessorObserverNotification(ProcessorObserverNotificationType.LOAD_INTO_RAM, null, null));
+	}
+
+	/**
+	 * If <code>label</code> is a valid memory location and not a label, returns that ID. <br>
+	 * If <code>label</code> is a valid label, returns the corresponding memory location. <br>
+	 * If neither, throws a fun exception.
+	 */
+	@Override
+	public int getMaybeLabelledMemorySlotID(String potentialLabel) throws LMCRuntimeException {
+		try {
+			return Integer.parseInt(potentialLabel);
+		} catch (NumberFormatException e) {    // not a number
+			if (labels.containsKey(potentialLabel)) {
+				return labels.get(potentialLabel);
+			} else {
+				throw new LMCRuntimeException("Invalid label (\"" + potentialLabel + "\")");
+			}
+		}
 	}
 
 	@Override
@@ -82,83 +151,6 @@ public abstract class AbstractObservableProcessorImplementation extends Abstract
 	@Override
 	public int getRegisterValue(RegisterType registerType) {
 		return this.getRegister(registerType).getValue();
-	}
-
-	@Override
-	public void run() {
-		setHalting(false);
-		setRunning(true);
-		while (!halting) {
-			fetchInstructions();
-			executeInstructions(decodeInstructions());
-		}
-		setRunning(false);
-		setHalting(false);
-	}
-
-	protected abstract void fetchInstructions();
-
-	protected abstract Pair<Instruction, Integer> decodeInstructions();
-
-	protected abstract void executeInstructions(Pair<Instruction, Integer> instructionParameterPair);
-
-	@Override
-	public void loadInstructionsIntoMemory() throws LMCRuntimeException {
-		System.out.println("Loading instructions into memory");
-		for (int i = 0; i < instructions.length * 2; i++) {
-			int correctedI = i < instructions.length ? i : i - instructions.length;
-			Instruction instruction = instructions[correctedI].getInstruction();
-			String label = instructions[correctedI].getLabel();
-			String parameter = instructions[correctedI].getParameter();
-
-
-			// init all the DAT instructions first, so that they can be used, even if they're not chronologically defined.
-			if (i < instructions.length) { // search only DAT
-				if (instruction.equals(Instruction.DAT)) {
-					if (parameter != null) {
-						setMemorySlot(i, getMaybeLabelledMemorySlotID(parameter));
-					}
-				}
-			}
-
-			if (i >= instructions.length) { // search only non-DAT.
-				if (instruction.equals(Instruction.DAT)) continue;
-				int code = instruction.requiresParameter()
-						? instruction.getCode(getMaybeLabelledMemorySlotID(parameter))
-						: instruction.getCode();
-				setMemorySlot(correctedI, code);
-			}
-
-			if (label != null) {
-				labels.put(label, correctedI);
-			}
-		}
-
-		notifyObservers(new ProcessorObserverNotification(ProcessorObserverNotificationType.LOAD_INTO_RAM, null, null));
-	}
-
-	@Override
-	public void notifyObservers(Object arg) {
-		super.notifyObservers(arg);
-		setChanged();
-	}
-
-	/**
-	 * If <code>label</code> is a valid memory location and not a label, returns that ID. <br>
-	 * If <code>label</code> is a valid label, returns the corresponding memory location. <br>
-	 * If neither, throws a fun exception.
-	 */
-	@Override
-	public int getMaybeLabelledMemorySlotID(String potentialLabel) throws LMCRuntimeException {
-		try {
-			return Integer.parseInt(potentialLabel);
-		} catch (NumberFormatException e) {    // not a number
-			if (labels.containsKey(potentialLabel)) {
-				return labels.get(potentialLabel);
-			} else {
-				throw new LMCRuntimeException("Invalid label (\"" + potentialLabel + "\")");
-			}
-		}
 	}
 
 	@Override
@@ -272,6 +264,12 @@ public abstract class AbstractObservableProcessorImplementation extends Abstract
 	}
 
 	@Override
+	public void notifyObservers(Object arg) {
+		super.notifyObservers(arg);
+		setChanged();
+	}
+
+	@Override
 	public synchronized void addObserver(Observer o) {
 		super.addObserver(o);
 		observers.add(o);
@@ -286,5 +284,11 @@ public abstract class AbstractObservableProcessorImplementation extends Abstract
 	public List<Observer> getObservers() {
 		return observers;
 	}
+
+	protected abstract void fetchInstructions();
+
+	protected abstract Pair<Instruction, Integer> decodeInstructions();
+
+	protected abstract void executeInstructions(Pair<Instruction, Integer> instructionParameterPair);
 
 }
