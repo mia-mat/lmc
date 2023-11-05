@@ -1,6 +1,8 @@
 package me.mil.lmc.backend;
 
-public class Register {
+import java.util.Observable;
+
+public class Register{
 
 	private int value;
 
