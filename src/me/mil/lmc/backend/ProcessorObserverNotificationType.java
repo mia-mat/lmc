@@ -1,0 +1,18 @@
+package me.mil.lmc.backend;
+
+public enum ProcessorObserverNotificationType {
+	SET_CLOCK_SPEED,
+	HALTING,
+	SET_MEMORY,
+	CLEAR_MEMORY,
+	SET_MEMORY_SIZE,
+	SET_READER,
+	SET_REGISTER,
+	CLEAR_REGISTERS,
+	RUNNING,
+	SET_WRITER,
+	SET_HALTING,
+	SET_RUNNING,
+	SET_INSTRUCTIONS,
+	LOAD_INTO_RAM
+}

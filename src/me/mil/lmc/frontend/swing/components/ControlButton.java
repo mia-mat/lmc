@@ -2,7 +2,7 @@ package me.mil.lmc.frontend.swing.components;
 
 import me.mil.lmc.frontend.ControlFunction;
 import me.mil.lmc.frontend.LMCInterface;
-import me.mil.lmc.frontend.ProgramObserver;
+import me.mil.lmc.frontend.LMCProcessorObserver;
 
 import javax.swing.*;
 import java.util.Arrays;
@@ -14,8 +14,12 @@ import java.util.function.Function;
 public class ControlButton extends JButton {
 
 	private static final Function<LMCInterface, Boolean> CONDITION_PROGRAM_NOT_RUNNING = (lmc) -> {
-		if(lmc.getCompiledProgram() == null) return false;
-		return !lmc.getCompiledProgram().isRunning();
+		if(lmc.getProcessor() == null) return true;
+		return !lmc.getProcessor().isRunning();
+	};
+	private static final Function<LMCInterface, Boolean> CONDITION_PROGRAM_RUNNING = (lmc) -> {
+		if(lmc.getProcessor() == null) return false;
+		return lmc.getProcessor().isRunning();
 	};
 
 	protected static ControlButton RUN(LMCInterface lmcInterface) {
@@ -28,14 +32,19 @@ public class ControlButton extends JButton {
 		 return new ControlButton("Clear Memory", lmcInterface, () -> CONDITION_PROGRAM_NOT_RUNNING.apply(lmcInterface), ControlFunction.CLEAR_RAM);
 	}
 	protected static ControlButton STOP(LMCInterface lmcInterface) {
-		return new ControlButton("Stop", lmcInterface, () -> !CONDITION_PROGRAM_NOT_RUNNING.apply(lmcInterface), ControlFunction.STOP);
+		return new ControlButton("Stop", lmcInterface, () -> CONDITION_PROGRAM_RUNNING.apply(lmcInterface), ControlFunction.STOP);
 	}
 
 	private ControlButton(String text, LMCInterface lmcInterface, Callable<Boolean> enabledCondition, ControlFunction... functions) {
 		setText(text);
 		addActionListener((e) -> Arrays.stream(functions).forEach(lmcInterface::performControlFunction));
 
-		new ProgramObserver(lmcInterface){
+		try {
+			setEnabled(enabledCondition.call());
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+		new LMCProcessorObserver(lmcInterface){
 			@Override
 			public void update(Observable o, Object arg) {
 				try {

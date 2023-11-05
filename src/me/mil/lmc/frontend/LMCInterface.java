@@ -2,7 +2,8 @@ package me.mil.lmc.frontend;
 
 import me.mil.lmc.LMCReader;
 import me.mil.lmc.LMCWriter;
-import me.mil.lmc.backend.Program;
+import me.mil.lmc.backend.AbstractObservableProcessor;
+
 import me.mil.lmc.backend.exceptions.LMCException;
 import me.mil.lmc.backend.exceptions.LMCRuntimeException;
 import me.mil.lmc.frontend.swing.components.*;
@@ -31,8 +32,8 @@ public class LMCInterface {
 	private LMCReader reader;
 	private LMCWriter writer;
 
-	private Program compiledProgram;
-	private final List<ProgramObserver> programObservers = new ArrayList<>();
+	private AbstractObservableProcessor processor;
+	private final List<LMCProcessorObserver> processorObservers = new ArrayList<>();
 
 	public LMCInterface() {
 		this.frame = generateFrame();
@@ -67,12 +68,12 @@ public class LMCInterface {
 		return frame;
 	}
 
-	private void updateProgramObservers() {
-		programObservers.forEach(po -> po.setProgram(compiledProgram));
+	private void updateProcessorObservers() {
+		processorObservers.forEach(po -> po.setProcessor(processor));
 	}
 
-	protected void addProgramObserver(ProgramObserver programObserver) {
-		programObservers.add(programObserver);
+	protected void addProcessorObserver(LMCProcessorObserver processorObserver) {
+		processorObservers.add(processorObserver);
 	}
 
 	public void performControlFunction(ControlFunction function) {
@@ -134,13 +135,13 @@ public class LMCInterface {
 		return writer;
 	}
 
-	public Program getCompiledProgram() {
-		return compiledProgram;
+	public AbstractObservableProcessor getProcessor() {
+		return processor;
 	}
 
-	protected void setCompiledProgram(Program newProgram) {
-		this.compiledProgram = newProgram;
-		updateProgramObservers();
+	protected void setProcessor(AbstractObservableProcessor newProcessor) {
+		this.processor = newProcessor;
+		updateProcessorObservers();
 	}
 
 }

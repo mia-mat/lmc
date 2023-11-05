@@ -3,6 +3,7 @@ package me.mil.lmc.frontend.swing.components;
 import me.mil.lmc.frontend.LMCInterface;
 
 public abstract class LMCSubPanel extends LMCPanel{
+
 	public LMCSubPanel(LMCInterface lmcInterface) {
 		super(lmcInterface);
 

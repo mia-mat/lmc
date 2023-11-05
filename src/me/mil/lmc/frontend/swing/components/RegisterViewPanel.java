@@ -1,12 +1,11 @@
 package me.mil.lmc.frontend.swing.components;
 
-import me.mil.lmc.backend.ProgramState;
-import me.mil.lmc.backend.RegisterType;
-import me.mil.lmc.frontend.ProgramObserver;
+import me.mil.lmc.backend.*;
+import me.mil.lmc.frontend.LMCProcessorObserver;
 import me.mil.lmc.frontend.LMCInterface;
 import me.mil.lmc.frontend.util.GBCBuilder;
 import me.mil.lmc.frontend.util.InterfaceUtils;
-import me.mil.lmc.frontend.util.StyleUtil;
+import me.mil.lmc.frontend.util.StyleConstants;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -39,13 +38,13 @@ public final class RegisterViewPanel extends LMCSubPanel {
 		@Override
 		protected void generate() {
 			setLayout(new FlowLayout(FlowLayout.LEFT));
-//			setBackground(getParent().getBackground()); // tODO fix
+			setBackground(StyleConstants.COLOR_REGISTER_VIEW_BACKGROUND);
 			setBorder(new EmptyBorder(0, 0, 0, 20));
 
 			JLabel labelRegister = new JLabel(this.registerType.getUiName());
 
 			JLabel labelValue = new JLabel("000");
-			labelValue.setFont(UIManager.getFont("h4.font"));
+			labelValue.setFont(StyleConstants.FONT_H4);
 
 			add(labelRegister);
 			add(labelValue);
@@ -81,8 +80,8 @@ public final class RegisterViewPanel extends LMCSubPanel {
 	@Override
 	protected void generate() {
 		setLayout(new FlowLayout(FlowLayout.LEFT));
-		setBorder(StyleUtil.BORDER_EMPTY);
-		setBackground(StyleUtil.COLOR_REGISTER_VIEW_BACKGROUND);
+		setBorder(StyleConstants.BORDER_EMPTY);
+		setBackground(StyleConstants.COLOR_REGISTER_VIEW_BACKGROUND);
 
 		registerObjects = new HashMap<>();
 		Arrays.stream(RegisterType.values()).forEach(type -> { // Generate a RegisterPanel for each RegisterType
@@ -92,10 +91,15 @@ public final class RegisterViewPanel extends LMCSubPanel {
 			registerObjects.put(type, reg);
 		});
 
-		new ProgramObserver(getInterface()) {
+		new LMCProcessorObserver(getInterface()) {
 			@Override
-			public void update(Observable o, Object arg) {
-				registerObjects.keySet().forEach(type -> registerObjects.get(type).setValueLabelText(((ProgramState) arg).getRegister(type).getValue()));
+			public void update(AbstractObservableProcessor processor, ProcessorObserverNotification notification) {
+				if(notification.getNotificationType() == ProcessorObserverNotificationType.SET_REGISTER
+				|| notification.getNotificationType() == ProcessorObserverNotificationType.CLEAR_REGISTERS) {
+					registerObjects.keySet().forEach(type -> registerObjects.get(type).setValueLabelText(processor.getRegisterValue(type)));
+				}
+
+
 			}
 		};
 	}

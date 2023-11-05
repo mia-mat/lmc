@@ -5,54 +5,53 @@ import me.mil.lmc.backend.exceptions.LMCRuntimeException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
+import java.util.function.Consumer;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 public enum Instruction {
-	ADD("1XX", ((state, input) -> { // Add the input to the accumulator
-		return state.setRegister(RegisterType.ACCUMULATOR, state.getRegister(RegisterType.ACCUMULATOR).getValue()+state.getValue(input));
+	ADD("1XX", ((processor, parameter) -> { // Add the input to the accumulator
+		processor.setRegister(RegisterType.ACCUMULATOR, processor.getRegisterValue(RegisterType.ACCUMULATOR)+processor.getMemorySlotValue(parameter));
 	})),
-	SUB("2XX", ((state, input) -> { // Subtract the input from the accumulator
-		return state.setRegister(RegisterType.ACCUMULATOR, state.getRegister(RegisterType.ACCUMULATOR).getValue()-state.getValue(input));
+	SUB("2XX", ((processor, parameter) -> { // Subtract the input from the accumulator
+		processor.setRegister(RegisterType.ACCUMULATOR, processor.getRegisterValue(RegisterType.ACCUMULATOR)-processor.getMemorySlotValue(parameter));
 	})),
-	STA("3XX", ((state, input) -> { // Store the contents of the accumulator in RAM location 'input'
-		return state.setValue(input, state.getRegister(RegisterType.ACCUMULATOR).getValue());
+	STA("3XX", ((processor, parameter) -> { // Store the contents of the accumulator in RAM location 'input'
+		processor.setMemorySlot(parameter, processor.getRegisterValue(RegisterType.ACCUMULATOR));
 	})),
-	LDA("5XX", ((state, input) -> { // Load the value from RAM location 'input' into the accumulator
-		return state.setRegister(RegisterType.ACCUMULATOR, state.getValue(input));
+	LDA("5XX", ((processor, parameter) -> { // Load the value from RAM location 'input' into the accumulator
+		processor.setRegister(RegisterType.ACCUMULATOR, processor.getMemorySlotValue(parameter));
 	})),
-	BRA("6XX", ((state, input) -> { // Set the Program Counter to 'input'
-		return state.setRegister(RegisterType.PROGRAM_COUNTER, input);
+	BRA("6XX", ((processor, parameter) -> { // Set the Program Counter to 'input'
+		processor.setRegister(RegisterType.PROGRAM_COUNTER, parameter);
 	})),
-	BRZ("7XX", ((state, input) -> { // Set the Program Counter to 'input' if the accumulator is 0
-		if(state.getRegister(RegisterType.ACCUMULATOR).getValue() == 0) return state.setRegister(RegisterType.PROGRAM_COUNTER, input);
-		return state;
+	BRZ("7XX", ((processor, parameter) -> { // Set the Program Counter to 'input' if the accumulator is 0
+		if(processor.getRegisterValue(RegisterType.ACCUMULATOR)==0) processor.setRegister(RegisterType.PROGRAM_COUNTER, parameter);
 	})),
-	BRP("8XX", ((state, input) -> {// Set the Program Counter to 'input' if the accumulator is greater than or equal to 0
-		if(state.getRegister(RegisterType.ACCUMULATOR).getValue() >= 0) return state.setRegister(RegisterType.PROGRAM_COUNTER, input);
-		return state;
+	BRP("8XX", ((processor, parameter) -> {// Set the Program Counter to 'input' if the accumulator is greater than or equal to 0
+		if(processor.getRegisterValue(RegisterType.ACCUMULATOR)>=0) processor.setRegister(RegisterType.PROGRAM_COUNTER, parameter);
 	})),
-	INP("901", ((state, input) -> { // Fetch a value from the user into the accumulator
-		return state.setRegister(RegisterType.ACCUMULATOR, state.getProgram().getReader().nextInt());
+	INP("901", ((processor, parameter) -> { // Fetch a value from the user into the accumulator
+		processor.setRegister(RegisterType.ACCUMULATOR, processor.getReader().nextInt());
 	})),
-	OUT("902", ((state, input) -> { // Output the value in the accumulator
-		state.getProgram().getWriter().write(state.getRegister(RegisterType.ACCUMULATOR).getValue());
-		return state;
+	OUT("902", ((processor, parameter) -> { // Output the value in the accumulator
+		processor.getWriter().write(processor.getRegisterValue(RegisterType.ACCUMULATOR));
 	})),
-	HLT("0", ((state, input) -> state.setHalting(true))),
+	HLT("0", ((processor, parameter) -> processor.setHalting(true))),
 	DAT(null, null);
 
 	private final String code;
-	private final BiFunction<ProgramState, Integer, ProgramState> function;
+	private final BiConsumer<IProcessor, Integer> function;
 
-	Instruction(String code, BiFunction<ProgramState, Integer, ProgramState> function) {
+	Instruction(String code, BiConsumer<IProcessor, Integer> function) {
 		this.code = code;
 		this.function = function;
 	}
 
-	public ProgramState execute(ProgramState state, Integer parameter) {
-		return function.apply(state, parameter);
+	public void execute(IProcessor processor, Integer parameter) {
+			function.accept(processor, parameter);
 	}
 
 	public boolean requiresParameter() {

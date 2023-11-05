@@ -1,8 +1,7 @@
 package me.mil.lmc.frontend;
 
-import me.mil.lmc.backend.Program;
+import me.mil.lmc.backend.LMCProcessor;
 import me.mil.lmc.backend.exceptions.LMCCompilationException;
-import me.mil.lmc.backend.exceptions.LMCException;
 import me.mil.lmc.backend.exceptions.LMCRuntimeException;
 
 import java.util.Arrays;
@@ -11,12 +10,11 @@ import java.util.function.Consumer;
 public enum ControlFunction {
 	COMPILE((lmcInterface) -> {
 		try {
-			lmcInterface.getMemoryViewPanel().clearMemoryUnits();
+			lmcInterface.setProcessor(LMCProcessor.compileInstructions(lmcInterface.getInputPanel().getText(),
+					lmcInterface.getControlPanel().getRequestedMemorySize(), lmcInterface.getControlPanel().getRequestedClockSpeed(),
+					lmcInterface.getReader(), lmcInterface.getWriter()));
 
-			for(int i = 0; i < lmcInterface.getControlPanel().getRequestedMemorySize(); i++) { // Instantiate Memory Units
-				lmcInterface.getMemoryViewPanel().addMemoryUnit(i);
-			}
-			lmcInterface.setCompiledProgram(Program.compileProgram(lmcInterface.getReader(), lmcInterface.getWriter(), lmcInterface.getControlPanel().getRequestedMemorySize(), lmcInterface.getInputPanel().getText()));
+			lmcInterface.getMemoryViewPanel().resetMemoryUnits();
 
 		} catch (LMCCompilationException e) {
 			lmcInterface.showErrorDialog(e);
@@ -24,27 +22,25 @@ public enum ControlFunction {
 	}),
 	LOAD_INTO_RAM(lmcInterface -> {
 		try {
-			lmcInterface.getCompiledProgram().loadIntoRAM();
+			lmcInterface.getProcessor().loadInstructionsIntoMemory();
 		} catch (LMCRuntimeException e) {
 			lmcInterface.showErrorDialog(e);
 		}
 	}, COMPILE),
-	CLEAR_RAM(lmcInterface -> lmcInterface.getCompiledProgram().clearRAM(), COMPILE),
+	CLEAR_RAM(lmcInterface -> lmcInterface.getProcessor().clearMemory(), COMPILE),
 	RUN(lmcInterface -> {
 		try {
-			lmcInterface.getCompiledProgram().run(lmcInterface.getControlPanel().getRequestedClockSpeed(), false, false);
+			lmcInterface.getProcessor().run();
 		} catch (Exception e) {
-			if(e instanceof LMCException) {
-				lmcInterface.showErrorDialog((LMCException) e);
-			}else{
-				throw new RuntimeException(e);
-			}
+			lmcInterface.showErrorDialog(new LMCRuntimeException("Unknown Runtime Exception."));
+			throw new RuntimeException(e);
 		}
 	}, CLEAR_RAM, LOAD_INTO_RAM),
-	STOP((lmc) -> { System.out.println("stop!"); }); // TODO
+	STOP((lmc) -> { lmc.getProcessor().forceHalt(); });
 
 	private final Consumer<LMCInterface> action;
 	private final ControlFunction[] inheritedFunctions;
+
 	ControlFunction(Consumer<LMCInterface> action, ControlFunction... inheritedFunctions) {
 		this.action = action;
 		this.inheritedFunctions = inheritedFunctions;
@@ -54,4 +50,6 @@ public enum ControlFunction {
 		Arrays.stream(inheritedFunctions).forEach(lmcInterface::performControlFunction);
 		action.accept(lmcInterface);
 	}
+
+
 }

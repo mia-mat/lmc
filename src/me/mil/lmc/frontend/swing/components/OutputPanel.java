@@ -2,6 +2,7 @@ package me.mil.lmc.frontend.swing.components;
 
 import me.mil.lmc.frontend.LMCInterface;
 import me.mil.lmc.frontend.util.GBCBuilder;
+import me.mil.lmc.frontend.util.StyleConstants;
 
 import javax.swing.*;
 import java.awt.*;
@@ -26,6 +27,7 @@ public final class OutputPanel extends LMCSubPanel {
 		setLayout(new GridBagLayout());
 
 		JTextArea textArea = new JTextArea();
+		textArea.setFont(StyleConstants.FONT_LARGE);
 		textArea.setEditable(false);
 		textArea.setText("Output:\n");
 

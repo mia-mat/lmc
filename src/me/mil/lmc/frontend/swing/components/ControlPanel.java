@@ -3,6 +3,7 @@ package me.mil.lmc.frontend.swing.components;
 import me.mil.lmc.frontend.LMCInterface;
 import me.mil.lmc.frontend.util.GBCBuilder;
 import me.mil.lmc.frontend.util.InterfaceUtils;
+import me.mil.lmc.frontend.util.StyleConstants;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -60,13 +61,13 @@ public final class ControlPanel extends LMCSubPanel {
 		JLabel labelClockSpeed = new JLabel("Clock Speed (Hz)");
 		labelClockSpeed.setBorder(new EmptyBorder(0, 5, 0, 0)); // Align
 
-		JLabel labelClockSpeedUnrestricted = new JLabel("(Unrestricted)"); // show when clock speed is set to "0", to inform the user that it's actually unrestricted.
+		JLabel labelClockSpeedUnrestricted = new JLabel("(Unrestricted)"); // Show when clock speed is set to "0", to inform the user that it's unrestricted.
 
-		//		labelClockSpeedUnrestricted.setForeground(new Color(255, 119, 119)); // Potential Colour
-		labelClockSpeedUnrestricted.setForeground(new Color(128, 255, 119)); //todo make this into a constant - style class exists
+		labelClockSpeedUnrestricted.setForeground(StyleConstants.COLOR_CONTROL_PANEL_UNRESTRICTED_CLOCK_SPEED_FOREGROUND);
 
 		JTextField textFieldClockSpeed = new JTextField("0");
 
+		// todo make this more elegant
 		textFieldClockSpeed.addKeyListener(new IntegerInputKeyAdapter(textFieldClockSpeed, 5) { // Set restrictions
 			@Override
 			public void keyTyped(KeyEvent e) {

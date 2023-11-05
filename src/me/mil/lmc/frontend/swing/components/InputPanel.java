@@ -2,7 +2,7 @@ package me.mil.lmc.frontend.swing.components;
 
 import me.mil.lmc.frontend.LMCInterface;
 import me.mil.lmc.frontend.util.GBCBuilder;
-import me.mil.lmc.frontend.util.StyleUtil;
+import me.mil.lmc.frontend.util.StyleConstants;
 
 import javax.swing.*;
 import javax.swing.text.DefaultEditorKit;
@@ -31,7 +31,7 @@ public final class InputPanel extends LMCSubPanel {
 		JTextArea textArea = new JTextArea();
 		textArea.setLineWrap(false);
 		textArea.setFocusable(true);
-		textArea.setFont(StyleUtil.FONT_LARGE());
+		textArea.setFont(StyleConstants.FONT_MONOSPACED);
 
 		// Prevent beep sound when pressing backspace at start of text area
 		Action deleteAction = textArea.getActionMap().get(DefaultEditorKit.deletePrevCharAction);

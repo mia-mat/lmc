@@ -15,6 +15,7 @@ public class InterfaceUtils {
 
 	protected static void initLookAndFeel() {
 		FlatDarculaLaf.setup(); // L&F
+		StyleConstants.initLFDependentFields();
 	}
 
 	public static void addAll(Container container, Component... components) {

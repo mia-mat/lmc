@@ -10,8 +10,6 @@ public class LMC {
 
 		InterfaceUtils.createInterface();
 
-
-
 	}
 
 }

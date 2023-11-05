@@ -4,7 +4,8 @@ import javax.swing.*;
 import java.awt.*;
 
 /**
- * Taken from https://github.com/tips4java/tips4java/blob/main/source/WrapLayout.java
+ *  Taken from https://github.com/tips4java/tips4java/blob/main/source/WrapLayout.java
+ * <br>
  *  FlowLayout subclass that fully supports wrapping of components.
  */
 public class WrapLayout extends FlowLayout
