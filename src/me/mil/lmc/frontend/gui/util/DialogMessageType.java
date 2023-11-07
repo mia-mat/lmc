@@ -1,4 +1,4 @@
-package me.mil.lmc.frontend.util;
+package me.mil.lmc.frontend.gui.util;
 
 import javax.swing.*;
 

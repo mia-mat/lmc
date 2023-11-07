@@ -1,4 +1,4 @@
-package me.mil.lmc.frontend;
+package me.mil.lmc.frontend.gui;
 
 import me.mil.lmc.backend.ProcessorObserver;
 
@@ -9,4 +9,6 @@ public class LMCProcessorObserver extends ProcessorObserver {
 		super(lmcInterface.getProcessor());
 		lmcInterface.addProcessorObserver(this);
 	}
+
+
 }

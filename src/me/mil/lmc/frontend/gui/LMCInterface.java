@@ -1,13 +1,14 @@
-package me.mil.lmc.frontend;
+package me.mil.lmc.frontend.gui;
 
 import me.mil.lmc.LMCReader;
 import me.mil.lmc.LMCWriter;
 import me.mil.lmc.backend.AbstractObservableProcessor;
 
+import me.mil.lmc.backend.LMCProcessor;
 import me.mil.lmc.backend.exceptions.LMCException;
 import me.mil.lmc.backend.exceptions.LMCRuntimeException;
-import me.mil.lmc.frontend.swing.components.*;
-import me.mil.lmc.frontend.util.DialogMessageType;
+import me.mil.lmc.frontend.gui.components.*;
+import me.mil.lmc.frontend.gui.util.DialogMessageType;
 
 import javax.swing.*;
 import java.util.ArrayList;
@@ -33,7 +34,7 @@ public class LMCInterface {
 	private LMCReader reader;
 	private LMCWriter writer;
 
-	private AbstractObservableProcessor processor;
+	private LMCProcessor processor;
 	private final List<LMCProcessorObserver> processorObservers = new ArrayList<>();
 
 	public LMCInterface() {
@@ -56,7 +57,6 @@ public class LMCInterface {
 		this.memoryViewPanel = new MemoryViewPanel(this);
 		//
 		frame.setVisible(true);
-
 	}
 
 	private JFrame generateFrame() {
@@ -137,11 +137,11 @@ public class LMCInterface {
 		return writer;
 	}
 
-	public AbstractObservableProcessor getProcessor() {
+	public LMCProcessor getProcessor() {
 		return processor;
 	}
 
-	protected void setProcessor(AbstractObservableProcessor newProcessor) {
+	protected void setProcessor(LMCProcessor newProcessor) {
 		this.processor = newProcessor;
 		updateProcessorObservers();
 	}

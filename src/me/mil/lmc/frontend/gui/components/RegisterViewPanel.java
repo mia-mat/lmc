@@ -1,11 +1,11 @@
-package me.mil.lmc.frontend.swing.components;
+package me.mil.lmc.frontend.gui.components;
 
 import me.mil.lmc.backend.*;
-import me.mil.lmc.frontend.LMCProcessorObserver;
-import me.mil.lmc.frontend.LMCInterface;
-import me.mil.lmc.frontend.util.GBCBuilder;
-import me.mil.lmc.frontend.util.InterfaceUtils;
-import me.mil.lmc.frontend.util.StyleConstants;
+import me.mil.lmc.frontend.gui.LMCProcessorObserver;
+import me.mil.lmc.frontend.gui.LMCInterface;
+import me.mil.lmc.frontend.gui.util.GBCBuilder;
+import me.mil.lmc.frontend.gui.util.InterfaceUtils;
+import me.mil.lmc.frontend.gui.util.StyleConstants;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -13,7 +13,6 @@ import java.awt.*;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Observable;
 
 public final class RegisterViewPanel extends LMCSubPanel {
 
@@ -85,6 +84,7 @@ public final class RegisterViewPanel extends LMCSubPanel {
 
 		registerObjects = new HashMap<>();
 		Arrays.stream(RegisterType.values()).forEach(type -> { // Generate a RegisterPanel for each RegisterType
+			if(!type.isDisplayed()) return;
 			RegisterPanel reg = new RegisterPanel(getInterface(), type);
 			add(reg);
 
@@ -92,11 +92,13 @@ public final class RegisterViewPanel extends LMCSubPanel {
 		});
 
 		new LMCProcessorObserver(getInterface()) {
+
 			@Override
-			public void update(AbstractObservableProcessor processor, ProcessorObserverNotification notification) {
-				if(notification.getNotificationType() == ProcessorObserverNotificationType.SET_REGISTER
-				|| notification.getNotificationType() == ProcessorObserverNotificationType.CLEAR_REGISTERS) {
-					registerObjects.keySet().forEach(type -> registerObjects.get(type).setValueLabelText(processor.getRegisterValue(type)));
+			public void onUpdate(Processor processor, ProcessorObserverNotification notification) {
+				if(notification.getType() == ProcessorObserverNotificationType.SET_REGISTER
+				|| notification.getType() == ProcessorObserverNotificationType.CLEAR_REGISTERS) {
+					SwingUtilities.invokeLater(() -> registerObjects.keySet().forEach(type -> registerObjects.get(type).setValueLabelText((int)processor.getRegisterValue(type))));
+
 				}
 
 

@@ -1,8 +1,8 @@
-package me.mil.lmc.frontend.swing.components;
+package me.mil.lmc.frontend.gui.components;
 
-import me.mil.lmc.frontend.LMCInterface;
-import me.mil.lmc.frontend.util.GBCBuilder;
-import me.mil.lmc.frontend.util.StyleConstants;
+import me.mil.lmc.frontend.gui.LMCInterface;
+import me.mil.lmc.frontend.gui.util.GBCBuilder;
+import me.mil.lmc.frontend.gui.util.StyleConstants;
 
 import javax.swing.*;
 import javax.swing.text.DefaultEditorKit;

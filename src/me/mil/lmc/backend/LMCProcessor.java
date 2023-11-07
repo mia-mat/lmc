@@ -3,44 +3,14 @@ package me.mil.lmc.backend;
 import me.mil.lmc.LMCReader;
 import me.mil.lmc.LMCWriter;
 import me.mil.lmc.backend.exceptions.LMCCompilationException;
-import me.mil.lmc.backend.util.Pair;
 
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
-public class LMCProcessor extends AbstractObservableTimedProcessorImplementation {
-
-	private LMCProcessor(ProcessorInstruction[] instructions, int memorySize, int clockSpeed, LMCReader reader, LMCWriter writer) {
+public class LMCProcessor extends AbstractObservableClockedProcessor{
+	public LMCProcessor(ProcessorInstruction[] instructions, int memorySize, int clockSpeed, LMCReader reader, LMCWriter writer) {
 		super(instructions, memorySize, clockSpeed, reader, writer);
-
 	}
-
-	@Override
-	public void run() {
-		super.run();
-		System.out.println("Finished Executing Program");
-	}
-
-	@Override
-	protected void fetchInstructions() {
-		setRegister(RegisterType.MEMORY_ADDRESS_REGISTER, getRegisterValue(RegisterType.PROGRAM_COUNTER));
-		setRegister(RegisterType.PROGRAM_COUNTER, getRegisterValue(RegisterType.PROGRAM_COUNTER)+1);
-		setRegister(RegisterType.CURRENT_INSTRUCTION_REGISTER, getRegisterValue(RegisterType.MEMORY_ADDRESS_REGISTER));
-	}
-
-	@Override
-	protected Pair<Instruction, Integer> decodeInstructions() {
-		return Instruction.fromCode(getMemorySlotValue(getRegisterValue(RegisterType.CURRENT_INSTRUCTION_REGISTER)));
-
-	}
-
-	@Override
-	protected void executeInstructions(Pair<Instruction, Integer> instructionParameterPair) {
-
-		instructionParameterPair.getA().execute(this, instructionParameterPair.getB());
-	}
-
 
 	public static LMCProcessor compileInstructions(String input, int memorySize, int clockSpeed, LMCReader reader, LMCWriter writer) throws LMCCompilationException {
 		if (memorySize < 1) throw new LMCCompilationException("Invalid RAM Size. (" + memorySize + ")");
@@ -100,7 +70,6 @@ public class LMCProcessor extends AbstractObservableTimedProcessorImplementation
 					throw new LMCCompilationException(i + 1, "Invalid number of parameters");
 			}
 		}
-
 		return new LMCProcessor(instructions.toArray(new ProcessorInstruction[0]), memorySize, clockSpeed, reader, writer);
 	}
 

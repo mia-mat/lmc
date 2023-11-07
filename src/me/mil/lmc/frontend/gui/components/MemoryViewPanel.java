@@ -1,14 +1,13 @@
-package me.mil.lmc.frontend.swing.components;
+package me.mil.lmc.frontend.gui.components;
 
-import me.mil.lmc.backend.AbstractObservableProcessor;
+import me.mil.lmc.backend.Processor;
 import me.mil.lmc.backend.ProcessorObserverNotification;
 import me.mil.lmc.backend.ProcessorObserverNotificationType;
-import me.mil.lmc.frontend.LMCProcessorObserver;
-import me.mil.lmc.frontend.LMCInterface;
-import me.mil.lmc.frontend.swing.WrapLayout;
-import me.mil.lmc.frontend.util.GBCBuilder;
-import me.mil.lmc.frontend.util.InterfaceUtils;
-import me.mil.lmc.frontend.util.StyleConstants;
+import me.mil.lmc.frontend.gui.LMCProcessorObserver;
+import me.mil.lmc.frontend.gui.LMCInterface;
+import me.mil.lmc.frontend.gui.util.GBCBuilder;
+import me.mil.lmc.frontend.gui.util.InterfaceUtils;
+import me.mil.lmc.frontend.gui.util.StyleConstants;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -52,17 +51,18 @@ public final class MemoryViewPanel extends LMCSubPanel {
 
 		new LMCProcessorObserver(getInterface()){
 			@Override
-			public void update(AbstractObservableProcessor processor, ProcessorObserverNotification notification) {
-				if(notification.getNotificationType() == ProcessorObserverNotificationType.SET_MEMORY
-				|| notification.getNotificationType() == ProcessorObserverNotificationType.CLEAR_MEMORY) {
-					memoryUnits.forEach((id, unit) -> unit.setOpCode(processor.getMemorySlotValue(id)));
-					return;
-				}
+			public void onUpdate(Processor processor, ProcessorObserverNotification notification) {
+				SwingUtilities.invokeLater(() -> {
+					if(notification.getType() == ProcessorObserverNotificationType.SET_MEMORY
+							|| notification.getType() == ProcessorObserverNotificationType.CLEAR_MEMORY) {
+						memoryUnits.forEach((id, unit) -> unit.setOpCode(processor.getMemorySlotValue(id)));
+						return;
+					}
 
-				if(notification.getNotificationType() == ProcessorObserverNotificationType.SET_MEMORY_SIZE) {
-					resetMemoryUnits();
-				}
-
+					if(notification.getType() == ProcessorObserverNotificationType.SET_MEMORY_SIZE) {
+						resetMemoryUnits();
+					}
+				});
 			}
 		};
 

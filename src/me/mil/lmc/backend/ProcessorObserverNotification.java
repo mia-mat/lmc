@@ -5,10 +5,13 @@ public class ProcessorObserverNotification {
 	private final Object oldVal;
 	private final ProcessorObserverNotificationType type;
 
-	ProcessorObserverNotification(ProcessorObserverNotificationType type, Object oldVal, Object newVal) {
+	public ProcessorObserverNotification(ProcessorObserverNotificationType type, Object oldVal, Object newVal) {
 		this.type = type;
 		this.oldVal = oldVal;
 		this.newVal = newVal;
+	}
+	public ProcessorObserverNotification(ProcessorObserverNotificationType type) {
+		this(type, null, null);
 	}
 
 	public Object getNewValue() {
@@ -19,7 +22,7 @@ public class ProcessorObserverNotification {
 		return oldVal;
 	}
 
-	public ProcessorObserverNotificationType getNotificationType() {
+	public ProcessorObserverNotificationType getType() {
 		return type;
 	}
 }

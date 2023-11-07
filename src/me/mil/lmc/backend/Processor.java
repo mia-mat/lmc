@@ -4,7 +4,21 @@ import me.mil.lmc.LMCReader;
 import me.mil.lmc.LMCWriter;
 import me.mil.lmc.backend.exceptions.LMCRuntimeException;
 
+import java.util.ArrayList;
+
 public interface Processor {
+
+	ArrayList<Runnable> getInstructionCycle();
+
+	int getInstructionCycleProgress();
+
+	void performCurrentInstructionStep();
+
+
+
+	MemorySlot[] getMemory();
+
+	Register[] getRegisters();
 
 	void clearMemory();
 
@@ -18,9 +32,11 @@ public interface Processor {
 
 	Register getRegister(RegisterType registerType);
 
-	int getRegisterValue(RegisterType registerType);
+	Object getRegisterValue(RegisterType registerType);
 
 	void run();
+	void prepareRun();
+	void finalizeRun();
 
 	void loadInstructionsIntoMemory() throws LMCRuntimeException;
 
@@ -28,7 +44,7 @@ public interface Processor {
 
 	void setMemorySlot(int id, int newValue);
 
-	void setRegister(RegisterType registerType, int newValue);
+	void setRegister(RegisterType registerType, Object newValue);
 
 	int getMemorySize();
 
@@ -50,9 +66,8 @@ public interface Processor {
 
 	void setRunning(boolean running);
 
-	ProcessorInstruction[] getRawInstructions();
+	ProcessorInstruction[] getInstructions();
 
-	void setRawInstructions(ProcessorInstruction[] instructions);
-
+	void setInstructions(ProcessorInstruction[] instructions);
 
 }

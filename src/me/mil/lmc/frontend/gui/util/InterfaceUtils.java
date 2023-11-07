@@ -1,7 +1,7 @@
-package me.mil.lmc.frontend.util;
+package me.mil.lmc.frontend.gui.util;
 
 import com.formdev.flatlaf.FlatDarculaLaf;
-import me.mil.lmc.frontend.LMCInterface;
+import me.mil.lmc.frontend.gui.LMCInterface;
 
 import java.awt.*;
 import java.util.Arrays;

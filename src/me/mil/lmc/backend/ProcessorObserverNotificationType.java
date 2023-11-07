@@ -1,7 +1,6 @@
 package me.mil.lmc.backend;
 
 public enum ProcessorObserverNotificationType {
-	SET_CLOCK_SPEED,
 	SET_MEMORY,
 	CLEAR_MEMORY,
 	SET_MEMORY_SIZE,

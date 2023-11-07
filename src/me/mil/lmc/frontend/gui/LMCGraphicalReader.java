@@ -1,6 +1,8 @@
-package me.mil.lmc.frontend;
+package me.mil.lmc.frontend.gui;
 
 import me.mil.lmc.LMCReader;
+
+import java.util.concurrent.CompletableFuture;
 
 public class LMCGraphicalReader implements LMCReader {
 
@@ -12,6 +14,7 @@ public class LMCGraphicalReader implements LMCReader {
 
 	@Override
 	public int nextInt() {
+
 		return promptForInt();
 	}
 

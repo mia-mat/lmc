@@ -1,4 +1,4 @@
-package me.mil.lmc.frontend;
+package me.mil.lmc.frontend.gui;
 
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;

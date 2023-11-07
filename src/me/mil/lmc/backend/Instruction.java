@@ -12,13 +12,13 @@ import java.util.stream.Collectors;
 
 public enum Instruction {
 	ADD("1XX", ((processor, parameter) -> { // Add the input to the accumulator
-		processor.setRegister(RegisterType.ACCUMULATOR, processor.getRegisterValue(RegisterType.ACCUMULATOR)+processor.getMemorySlotValue(parameter));
+		processor.setRegister(RegisterType.ACCUMULATOR, (int) processor.getRegisterValue(RegisterType.ACCUMULATOR)+processor.getMemorySlotValue(parameter));
 	})),
 	SUB("2XX", ((processor, parameter) -> { // Subtract the input from the accumulator
-		processor.setRegister(RegisterType.ACCUMULATOR, processor.getRegisterValue(RegisterType.ACCUMULATOR)-processor.getMemorySlotValue(parameter));
+		processor.setRegister(RegisterType.ACCUMULATOR, (int) processor.getRegisterValue(RegisterType.ACCUMULATOR)-processor.getMemorySlotValue(parameter));
 	})),
 	STA("3XX", ((processor, parameter) -> { // Store the contents of the accumulator in RAM location 'input'
-		processor.setMemorySlot(parameter, processor.getRegisterValue(RegisterType.ACCUMULATOR));
+		processor.setMemorySlot(parameter, (int) processor.getRegisterValue(RegisterType.ACCUMULATOR));
 	})),
 	LDA("5XX", ((processor, parameter) -> { // Load the value from RAM location 'input' into the accumulator
 		processor.setRegister(RegisterType.ACCUMULATOR, processor.getMemorySlotValue(parameter));
@@ -27,16 +27,16 @@ public enum Instruction {
 		processor.setRegister(RegisterType.PROGRAM_COUNTER, parameter);
 	})),
 	BRZ("7XX", ((processor, parameter) -> { // Set the Program Counter to 'input' if the accumulator is 0
-		if(processor.getRegisterValue(RegisterType.ACCUMULATOR)==0) processor.setRegister(RegisterType.PROGRAM_COUNTER, parameter);
+		if((int)processor.getRegisterValue(RegisterType.ACCUMULATOR)==0) processor.setRegister(RegisterType.PROGRAM_COUNTER, parameter);
 	})),
 	BRP("8XX", ((processor, parameter) -> {// Set the Program Counter to 'input' if the accumulator is greater than or equal to 0
-		if(processor.getRegisterValue(RegisterType.ACCUMULATOR)>=0) processor.setRegister(RegisterType.PROGRAM_COUNTER, parameter);
+		if((int)processor.getRegisterValue(RegisterType.ACCUMULATOR)>=0) processor.setRegister(RegisterType.PROGRAM_COUNTER, parameter);
 	})),
 	INP("901", ((processor, parameter) -> { // Fetch a value from the user into the accumulator
 		processor.setRegister(RegisterType.ACCUMULATOR, processor.getReader().nextInt());
 	})),
 	OUT("902", ((processor, parameter) -> { // Output the value in the accumulator
-		processor.getWriter().write(processor.getRegisterValue(RegisterType.ACCUMULATOR));
+		processor.getWriter().write((int)processor.getRegisterValue(RegisterType.ACCUMULATOR));
 	})),
 	HLT("0", ((processor, parameter) -> processor.setHalting(true))),
 	DAT(null, null);
@@ -50,7 +50,18 @@ public enum Instruction {
 	}
 
 	public void execute(Processor processor, Integer parameter) {
-			function.accept(processor, parameter);
+			execute(processor, parameter, false);
+	}
+	public void execute(Processor processor, Integer parameter, boolean ignoreClock) {
+		if(!ignoreClock){
+			if(processor instanceof ClockedProcessor) {
+				((ClockedProcessor) processor).addToRunnableQueue(() -> execute(processor, parameter, true));
+			}else execute(processor, parameter, true);
+
+			return;
+		}
+
+		function.accept(processor, parameter);
 	}
 
 	public boolean requiresParameter() {
@@ -70,6 +81,8 @@ public enum Instruction {
 	// not creating these dynamically because I like my performance (and brevity).
 	private static final Map<String, Instruction> codeToInstruction = Arrays.stream(Instruction.values()).collect(Collectors.toMap(i -> i.code, i -> i));
 	private static final Map<Short, Instruction> firstDigitToInstruction = Arrays.stream(Instruction.values()).filter(i -> (i.code!= null && i.code.contains("X"))).collect(Collectors.toMap(i -> Short.parseShort(String.valueOf(i.code.toCharArray()[0])), i -> i)); // Only for instructions with parameters
+
+
 	public static Pair<Instruction, Integer> fromCode(int code){ // Pair of Instruction, Parameter
 		String codeStr = String.valueOf(code);
 		if(codeToInstruction.containsKey(codeStr)) return new Pair<>(codeToInstruction.get(codeStr), null); // no parameter

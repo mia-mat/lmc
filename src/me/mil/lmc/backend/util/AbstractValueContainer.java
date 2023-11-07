@@ -1,4 +1,4 @@
-package me.mil.lmc.backend;
+package me.mil.lmc.backend.util;
 
 public abstract class AbstractValueContainer<T> {
 	private T value;

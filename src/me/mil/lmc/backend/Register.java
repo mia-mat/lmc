@@ -1,14 +1,11 @@
 package me.mil.lmc.backend;
 
-import java.util.Observable;
+import me.mil.lmc.backend.util.AbstractValueContainer;
 
-public class Register extends AbstractValueContainer<Integer>{
+public class Register<T> extends AbstractValueContainer<T> {
 
-	public Register(Integer value) {
+	public Register(T value) {
 		super(value);
-	}
-	public Register() {
-		this(0);
 	}
 
 }
