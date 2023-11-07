@@ -4,24 +4,24 @@ import java.awt.*;
 
 public class GBCBuilder {
 	public enum Anchor {
-		CENTRE(10),
-		CENTER(10),
-		NORTH(11),
-		NORTH_EAST(12),
-		EAST(13),
-		SOUTH_EAST(14),
-		SOUTH(15),
-		SOUTH_WEST(16),
-		WEST(17),
-		NORTH_WEST(18),
-		PAGE_START(19),
-		PAGE_END(20),
-		LINE_START(21),
-		LINE_END(22),
-		FIRST_LINE_START(23),
-		FIRST_LINE_END(24),
-		LAST_LINE_START(25),
-		LAST_LINE_END(26);
+		CENTRE(GridBagConstraints.CENTER),
+		CENTER(GridBagConstraints.CENTER),
+		NORTH(GridBagConstraints.NORTH),
+		NORTH_EAST(GridBagConstraints.NORTHEAST),
+		EAST(GridBagConstraints.EAST),
+		SOUTH_EAST(GridBagConstraints.SOUTHEAST),
+		SOUTH(GridBagConstraints.SOUTH),
+		SOUTH_WEST(GridBagConstraints.SOUTHWEST),
+		WEST(GridBagConstraints.WEST),
+		NORTH_WEST(GridBagConstraints.NORTHWEST),
+		PAGE_START(GridBagConstraints.PAGE_START),
+		PAGE_END(GridBagConstraints.PAGE_END),
+		LINE_START(GridBagConstraints.LINE_START),
+		LINE_END(GridBagConstraints.LINE_END),
+		FIRST_LINE_START(GridBagConstraints.FIRST_LINE_START),
+		FIRST_LINE_END(GridBagConstraints.FIRST_LINE_END),
+		LAST_LINE_START(GridBagConstraints.LAST_LINE_START),
+		LAST_LINE_END(GridBagConstraints.LAST_LINE_END);
 
 		private final int value;
 		Anchor(int value) {

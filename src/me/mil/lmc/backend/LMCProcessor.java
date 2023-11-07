@@ -3,11 +3,13 @@ package me.mil.lmc.backend;
 import me.mil.lmc.LMCReader;
 import me.mil.lmc.LMCWriter;
 import me.mil.lmc.backend.exceptions.LMCCompilationException;
+import me.mil.lmc.backend.util.Pair;
 
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
-public class LMCProcessor extends AbstractObservableProcessorImplementation {
+public class LMCProcessor extends AbstractObservableTimedProcessorImplementation {
 
 	private LMCProcessor(ProcessorInstruction[] instructions, int memorySize, int clockSpeed, LMCReader reader, LMCWriter writer) {
 		super(instructions, memorySize, clockSpeed, reader, writer);
@@ -21,7 +23,7 @@ public class LMCProcessor extends AbstractObservableProcessorImplementation {
 	}
 
 	@Override
-	protected void fetchInstructions() { // todo impl. clockspeed
+	protected void fetchInstructions() {
 		setRegister(RegisterType.MEMORY_ADDRESS_REGISTER, getRegisterValue(RegisterType.PROGRAM_COUNTER));
 		setRegister(RegisterType.PROGRAM_COUNTER, getRegisterValue(RegisterType.PROGRAM_COUNTER)+1);
 		setRegister(RegisterType.CURRENT_INSTRUCTION_REGISTER, getRegisterValue(RegisterType.MEMORY_ADDRESS_REGISTER));

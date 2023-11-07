@@ -8,6 +8,7 @@ import java.util.Arrays;
 import java.util.function.Consumer;
 
 public enum ControlFunction {
+	// TODO eliminate unnecessary compiles
 	COMPILE((lmcInterface) -> {
 		try {
 			lmcInterface.setProcessor(LMCProcessor.compileInstructions(lmcInterface.getInputPanel().getText(),
@@ -36,7 +37,7 @@ public enum ControlFunction {
 			throw new RuntimeException(e);
 		}
 	}, CLEAR_RAM, LOAD_INTO_RAM),
-	STOP((lmc) -> { lmc.getProcessor().forceHalt(); });
+	STOP((lmc) -> lmc.getProcessor().forceHalt());
 
 	private final Consumer<LMCInterface> action;
 	private final ControlFunction[] inheritedFunctions;

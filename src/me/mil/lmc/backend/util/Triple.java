@@ -1,4 +1,4 @@
-package me.mil.lmc.backend;
+package me.mil.lmc.backend.util;
 
 public class Triple<A,B,C> {
 

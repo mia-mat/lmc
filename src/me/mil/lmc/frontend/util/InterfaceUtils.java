@@ -23,7 +23,7 @@ public class InterfaceUtils {
 	}
 
 	public static String padInteger(int input, char ch, int length) {
-		return ((input<0) ? "-" : "") + String.format("%" + ch + length + "d", Math.abs(input));
+		return ((input<0) ? "-" : "") + String.format("%" + ch + length + "d", Math.abs(input)); // TODO fix bug wherein negative nums are cut off in RAM Units
 	}
 
 	public static String padInteger(int input) { // Default values

@@ -24,15 +24,11 @@ public interface Processor {
 
 	void loadInstructionsIntoMemory() throws LMCRuntimeException;
 
-	int getMaybeLabelledMemorySlotID(String label) throws LMCRuntimeException;
+	int getMaybeLabelledMemorySlotID(String label) throws LMCRuntimeException; // TODO come up with a better name, or put this in a separate interface/up to implementer
 
 	void setMemorySlot(int id, int newValue);
 
 	void setRegister(RegisterType registerType, int newValue);
-
-	int getClockSpeed();
-
-	void setClockSpeed(int clockSpeed);
 
 	int getMemorySize();
 
@@ -58,6 +54,5 @@ public interface Processor {
 
 	void setRawInstructions(ProcessorInstruction[] instructions);
 
-	boolean isRespectingClockSpeed();
 
 }

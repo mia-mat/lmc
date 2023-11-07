@@ -3,6 +3,7 @@ package me.mil.lmc.backend;
 import me.mil.lmc.LMCReader;
 import me.mil.lmc.LMCWriter;
 import me.mil.lmc.backend.exceptions.LMCRuntimeException;
+import me.mil.lmc.backend.util.Pair;
 
 import java.util.*;
 
@@ -12,7 +13,6 @@ public abstract class AbstractObservableProcessorImplementation extends Abstract
 	private LMCWriter writer;
 	private LMCReader reader;
 
-	private int clockSpeed;
 	private int memorySize;
 
 	private MemorySlot[] memory;
@@ -25,11 +25,9 @@ public abstract class AbstractObservableProcessorImplementation extends Abstract
 	private boolean halting;
 	private boolean running;
 
-	protected AbstractObservableProcessorImplementation(ProcessorInstruction[] instructions, int memorySize, int clockSpeed, LMCReader reader, LMCWriter writer) {
+	protected AbstractObservableProcessorImplementation(ProcessorInstruction[] instructions, int memorySize, LMCReader reader, LMCWriter writer) {
 		this.reader = reader;
 		this.writer = writer;
-
-		this.clockSpeed = clockSpeed;
 
 		this.memorySize = memorySize;
 		this.memory = new MemorySlot[this.memorySize];
@@ -168,18 +166,6 @@ public abstract class AbstractObservableProcessorImplementation extends Abstract
 	}
 
 	@Override
-	public int getClockSpeed() {
-		return clockSpeed;
-	}
-
-	@Override
-	public void setClockSpeed(int clockSpeed) {
-		int old = getClockSpeed();
-		this.clockSpeed = clockSpeed;
-		if(old!=clockSpeed) notifyObservers(new ProcessorObserverNotification(ProcessorObserverNotificationType.SET_CLOCK_SPEED, old, clockSpeed));
-	}
-
-	@Override
 	public int getMemorySize() {
 		return memorySize;
 	}
@@ -256,11 +242,6 @@ public abstract class AbstractObservableProcessorImplementation extends Abstract
 		ProcessorInstruction[] old = this.instructions.clone();
 		this.instructions = instructions;
 		if(!Arrays.equals(instructions,old)) notifyObservers(new ProcessorObserverNotification(ProcessorObserverNotificationType.SET_INSTRUCTIONS, old, this.instructions.clone()));
-	}
-
-	@Override
-	public boolean isRespectingClockSpeed() {
-		return clockSpeed > 0;
 	}
 
 	@Override

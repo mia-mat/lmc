@@ -7,12 +7,13 @@ import me.mil.lmc.backend.AbstractObservableProcessor;
 import me.mil.lmc.backend.exceptions.LMCException;
 import me.mil.lmc.backend.exceptions.LMCRuntimeException;
 import me.mil.lmc.frontend.swing.components.*;
+import me.mil.lmc.frontend.util.DialogMessageType;
 
 import javax.swing.*;
 import java.util.ArrayList;
 import java.util.List;
 
-// (not an interface)
+// (not an interface) // todo convert to abstract class/interface for less unnecessary functions/fields visible here
 public class LMCInterface {
 
 	private final JFrame frame;
@@ -60,6 +61,7 @@ public class LMCInterface {
 
 	private JFrame generateFrame() {
 		JFrame frame = new JFrame();
+		frame.setTitle("LMC");
 		frame.setSize(1400, 800);
 		frame.setLocationRelativeTo(null); // Centre
 		frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
@@ -80,7 +82,7 @@ public class LMCInterface {
 		function.executeAction(this);
 	}
 
-	public void showMessageDialog(String title, String description, MessageType messageType) {
+	public void showMessageDialog(String title, String description, DialogMessageType messageType) {
 		JOptionPane.showMessageDialog(getFrame(), description, title, messageType.getValue());
 	}
 
@@ -90,7 +92,7 @@ public class LMCInterface {
 
 	protected void showErrorDialog(LMCException error) {
 		showMessageDialog((error instanceof LMCRuntimeException) ? "Runtime Error" : "Compilation Error",
-				error.getMessage(), MessageType.ERROR_MESSAGE);
+				error.getMessage(), DialogMessageType.ERROR_MESSAGE);
 	}
 
 	// -- Getters / Setters -- //
