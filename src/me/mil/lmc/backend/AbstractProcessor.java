@@ -4,7 +4,6 @@ import me.mil.lmc.LMCReader;
 import me.mil.lmc.LMCWriter;
 import me.mil.lmc.backend.exceptions.LMCRuntimeException;
 import me.mil.lmc.backend.util.Pair;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.util.*;
 
@@ -52,7 +51,7 @@ public abstract class AbstractProcessor implements Processor {
 		prepareRun();
 
 		while(!isHalting()) {
-			performCurrentInstructionStep();
+			performNextInstructionStep();
 		}
 
 		finalizeRun();
@@ -76,7 +75,7 @@ public abstract class AbstractProcessor implements Processor {
 	}
 
 	@Override
-	public void performCurrentInstructionStep() {
+	public void performNextInstructionStep() {
 		getInstructionCycle().get(getInstructionCycleProgress()).run();
 		instructionCycleProgress++;
 		if(getInstructionCycleProgress() >= getInstructionCycle().size()) {
@@ -90,7 +89,7 @@ public abstract class AbstractProcessor implements Processor {
 			add(() -> { // Fetch
 				setRegister(RegisterType.MEMORY_ADDRESS_REGISTER, getRegisterValue(RegisterType.PROGRAM_COUNTER));
 				setRegister(RegisterType.PROGRAM_COUNTER, (int) getRegisterValue(RegisterType.PROGRAM_COUNTER)+1);
-//				setRegister(RegisterType.CURRENT_INSTRUCTION_REGISTER, getRegisterValue(RegisterType.MEMORY_DATA_REGISTER));
+//				setRegister(RegisterType.CURRENT_INSTRUCTION_REGISTER, getRegisterValue(RegisterType.MEMORY_DATA_REGISTER)); // TODO make CIR useful again
 			});
 
 			add(() -> { // Decode

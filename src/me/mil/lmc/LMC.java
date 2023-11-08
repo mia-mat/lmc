@@ -12,7 +12,6 @@ public class LMC {
 	public static void main(String[] args) throws Exception {
 
 		// TODO add args for gui/non-gui (something like -nogui). This uses shell input/output.
-//		SwingUtilities.invokeLater(InterfaceUtils::createInterface);
 		InterfaceUtils.createInterface();
 
 	}

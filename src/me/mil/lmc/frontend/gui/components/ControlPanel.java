@@ -71,7 +71,9 @@ public final class ControlPanel extends LMCSubPanel {
 			@Override
 			public void keyTyped(KeyEvent e) {
 				super.keyTyped(e);
-				labelClockSpeedUnrestricted.setVisible(Integer.parseInt(textFieldClockSpeed.getText()) == 0); // Correct visibility of unrestricted text
+				int input = Integer.parseInt(textFieldClockSpeed.getText());
+				labelClockSpeedUnrestricted.setVisible(input == 0); // Correct visibility of unrestricted text
+				if(getInterface().getProcessor() != null) getInterface().getProcessor().setClockSpeed(input);
 			}
 		});
 		this.textFieldClockSpeed = textFieldClockSpeed;

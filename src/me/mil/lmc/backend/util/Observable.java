@@ -1,18 +1,14 @@
 package me.mil.lmc.backend.util;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 // a non-class-based implementation of observable
 public interface Observable {
-	Map<Observer, Observable> observers = new HashMap<>();
+	Map<Observable, Set<Observer>> observers = new HashMap<>();
 
 	default void update(Observable caller, Object arg) {
-		observers.forEach((key, value) -> {
-			if(value == caller) {
-				key.onUpdate(caller, arg);
-			}
-		});
+		if(!observers.containsKey(this)) observers.put(this, new HashSet<>());
+		observers.get(this).forEach(c -> c.onUpdate(caller, arg));
 	}
 
 	default void update(Object arg) {
@@ -24,10 +20,13 @@ public interface Observable {
 	}
 
 	default void addObserver(Observer observer) {
-		observers.put(observer, this);
+		if(!observers.containsKey(this)) observers.put(this, new HashSet<>());
+
+		observers.get(this).add(observer);
 	}
 
+
 	default void deleteObserver(Observer observer) {
-		observers.remove(observer);
+		if(observers.containsKey(this)) observers.get(this).remove(observer);
 	}
 }

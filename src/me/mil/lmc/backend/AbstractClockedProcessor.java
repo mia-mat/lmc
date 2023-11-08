@@ -21,10 +21,13 @@ public abstract class AbstractClockedProcessor extends AbstractProcessor impleme
 		this.runnableQueue = new LinkedBlockingQueue<>();
 	}
 
-	@Override
-	public void run() {
-		super.prepareRun();
-		new Timer().scheduleAtFixedRate(new TimerTask() {
+	private int calculateMillisPerClock() {
+		if(clockSpeed == 0) return 0;
+		return 1000 / clockSpeed;
+	}
+
+	private TimerTask getRunTimerTask(Timer timer) {
+		return new TimerTask() {
 			@Override
 			public void run() {
 				if(isHalting()) {
@@ -34,7 +37,7 @@ public abstract class AbstractClockedProcessor extends AbstractProcessor impleme
 				}
 
 				if(getRunnableQueue().isEmpty()) {
-					performCurrentInstructionStep();
+					performNextInstructionStep();
 				}
 
 				if(currentlyRunningRunnable) return;
@@ -45,9 +48,18 @@ public abstract class AbstractClockedProcessor extends AbstractProcessor impleme
 					currentlyRunningRunnable = false;
 				}
 
+				this.cancel();
+				timer.schedule(getRunTimerTask(timer), calculateMillisPerClock());
 			}
-		}, 0L, (1000 / clockSpeed)); // todo setclockspeed reflect here
+		};
+	}
 
+	@Override
+	public void run() {
+		super.prepareRun();
+
+		Timer timer = new Timer();
+		timer.schedule(getRunTimerTask(timer), calculateMillisPerClock());
 
 	}
 

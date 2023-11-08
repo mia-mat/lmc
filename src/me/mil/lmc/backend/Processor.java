@@ -12,7 +12,7 @@ public interface Processor {
 
 	int getInstructionCycleProgress();
 
-	void performCurrentInstructionStep();
+	void performNextInstructionStep();
 
 
 
