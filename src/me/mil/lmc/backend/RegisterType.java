@@ -5,7 +5,7 @@ import me.mil.lmc.backend.util.Pair;
 public enum RegisterType {
 	PROGRAM_COUNTER(Integer.class, "PC"),
 	MEMORY_ADDRESS_REGISTER(Integer.class, "MAR"),
-	CURRENT_INSTRUCTION_REGISTER(Integer.class, "CIR"),
+	CURRENT_INSTRUCTION_REGISTER(Integer.class, "CIR", false), // TODO: make CIR be functional again
 	ACCUMULATOR(Integer.class, "ACC"),
 	MEMORY_DATA_REGISTER(Pair.class, false);
 

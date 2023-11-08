@@ -1,7 +1,5 @@
 package me.mil.lmc.backend;
 
-import me.mil.lmc.backend.Processor;
-import me.mil.lmc.backend.ProcessorObserverNotification;
 import me.mil.lmc.backend.util.Observable;
 import me.mil.lmc.backend.util.Observer;
 
@@ -15,7 +13,7 @@ public class ProcessorObserver<T extends Observable & Processor> implements Obse
 	}
 
 	public void setProcessor(T processor) {
-		if (this.processor != null)  this.processor.deleteObserver(this);
+		if (this.processor != null)  this.processor.removeObserver(this);
 		this.processor = processor;
 		if (processor != null) this.processor.addObserver(this);
 	}

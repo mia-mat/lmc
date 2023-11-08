@@ -22,7 +22,7 @@ public abstract class AbstractClockedProcessor extends AbstractProcessor impleme
 	}
 
 	private int calculateMillisPerClock() {
-		if(clockSpeed == 0) return 0;
+		if (clockSpeed == 0) return 0;
 		return 1000 / clockSpeed;
 	}
 
@@ -30,19 +30,19 @@ public abstract class AbstractClockedProcessor extends AbstractProcessor impleme
 		return new TimerTask() {
 			@Override
 			public void run() {
-				if(isHalting()) {
+				if (isHalting()) {
 					this.cancel();
 					AbstractClockedProcessor.super.finalizeRun();
 					return;
 				}
 
-				if(getRunnableQueue().isEmpty()) {
+				if (getRunnableQueue().isEmpty()) {
 					performNextInstructionStep();
 				}
 
-				if(currentlyRunningRunnable) return;
+				if (currentlyRunningRunnable) return;
 
-				if(!getRunnableQueue().isEmpty()) {
+				if (!getRunnableQueue().isEmpty()) {
 					currentlyRunningRunnable = true;
 					runnableQueue.poll().run();
 					currentlyRunningRunnable = false;
@@ -60,7 +60,6 @@ public abstract class AbstractClockedProcessor extends AbstractProcessor impleme
 
 		Timer timer = new Timer();
 		timer.schedule(getRunTimerTask(timer), calculateMillisPerClock());
-
 	}
 
 	@Override

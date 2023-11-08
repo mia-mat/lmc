@@ -1,6 +1,6 @@
 package me.mil.lmc.backend.util;
 
-public class Triple<A,B,C> {
+public class Triple<A, B, C> {
 
 	private A a;
 	private B b;

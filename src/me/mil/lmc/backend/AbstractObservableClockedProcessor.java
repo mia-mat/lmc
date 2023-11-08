@@ -4,16 +4,15 @@ import me.mil.lmc.LMCReader;
 import me.mil.lmc.LMCWriter;
 import me.mil.lmc.backend.exceptions.LMCRuntimeException;
 import me.mil.lmc.backend.util.Observable;
-import me.mil.lmc.backend.util.Observer;
 import me.mil.lmc.backend.util.Pair;
 
 /*
  AbstractClockedProcessor and AbstractObservableProcessor are unfortunately both abstract classes.
  Here, I'm just copying from AbstractObservableProcessor to have both abstract classes' benefits.
  This is not ideal; Better design decisions could have been made.
+ TODO: create a better system that allows AbstractClockedProcessor and AbstractObservableProcessor to be combined.
 */
 public abstract class AbstractObservableClockedProcessor extends AbstractClockedProcessor implements Observable {
-
 
 	public AbstractObservableClockedProcessor(ProcessorInstruction[] instructions, int memorySize, int clockSpeed, LMCReader reader, LMCWriter writer) {
 		super(instructions, memorySize, clockSpeed, reader, writer);

@@ -8,13 +8,13 @@ import java.util.ArrayList;
 
 public interface Processor {
 
+	// TODO: In implementations, don't create new processors every time a new program is executed. Instead, clear things, set the instructions and re-run.
+
 	ArrayList<Runnable> getInstructionCycle();
 
 	int getInstructionCycleProgress();
 
 	void performNextInstructionStep();
-
-
 
 	MemorySlot[] getMemory();
 

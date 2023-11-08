@@ -106,7 +106,6 @@ public abstract class AbstractProcessor implements Processor {
 
 	@Override
 	public void loadInstructionsIntoMemory() throws LMCRuntimeException {
-		System.out.println("Loading instructions into memory");
 		for (int i = 0; i < instructions.length * 2; i++) {
 			int correctedI = i < instructions.length ? i : i - instructions.length;
 			Instruction instruction = instructions[correctedI].getInstruction();
