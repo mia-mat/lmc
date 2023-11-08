@@ -8,8 +8,29 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class LMCProcessor extends AbstractObservableClockedProcessor{
+
+	private long instructionCycleCount;
+
 	public LMCProcessor(ProcessorInstruction[] instructions, int memorySize, int clockSpeed, LMCReader reader, LMCWriter writer) {
 		super(instructions, memorySize, clockSpeed, reader, writer);
+
+		instructionCycleCount = 0;
+	}
+
+	public long getInstructionCycleCount() {
+		return instructionCycleCount;
+	}
+
+	@Override
+	public void resetInstructionCycle() {
+		super.resetInstructionCycle();
+		instructionCycleCount++;
+	}
+
+	@Override
+	public void run() {
+		instructionCycleCount = 0;
+		super.run();
 	}
 
 	public static LMCProcessor compileInstructions(String input, int memorySize, int clockSpeed, LMCReader reader, LMCWriter writer) throws LMCCompilationException {

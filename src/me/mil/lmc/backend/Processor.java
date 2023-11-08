@@ -16,6 +16,8 @@ public interface Processor {
 
 	void performNextInstructionStep();
 
+	void resetInstructionCycle();
+
 	MemorySlot[] getMemory();
 
 	Register[] getRegisters();

@@ -79,8 +79,13 @@ public abstract class AbstractProcessor implements Processor {
 		getInstructionCycle().get(getInstructionCycleProgress()).run();
 		instructionCycleProgress++;
 		if(getInstructionCycleProgress() >= getInstructionCycle().size()) {
-			instructionCycleProgress = 0;
+			resetInstructionCycle();
 		}
+	}
+
+	@Override
+	public void resetInstructionCycle() {
+		instructionCycleProgress = 0;
 	}
 
 	@Override
