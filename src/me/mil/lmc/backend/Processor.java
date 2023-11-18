@@ -8,8 +8,6 @@ import java.util.ArrayList;
 
 public interface Processor {
 
-	// TODO: In implementations, don't create new processors every time a new program is executed. Instead, clear things, set the instructions and re-run.
-
 	ArrayList<Runnable> getInstructionCycle();
 
 	int getInstructionCycleProgress();
@@ -42,7 +40,7 @@ public interface Processor {
 
 	void loadInstructionsIntoMemory() throws LMCRuntimeException;
 
-	int getMaybeLabelledMemorySlotID(String label) throws LMCRuntimeException; // TODO come up with a better name, or put this in a separate interface/up to implementer
+	int getMemoryID(String potentialLabel) throws LMCRuntimeException;
 
 	void setMemorySlot(int id, int newValue);
 

@@ -16,14 +16,14 @@ public class LMCMenuBar {
 		SAVE
 	}
 
-	protected static JMenuBar generate(LMCInterface lmcInterface) {
+	protected static JMenuBar generate(AbstractGraphicalInterface lmcInterface) {
 		JMenuBar menuBar = new JMenuBar();
 		menuBar.add(generateFileMenu(lmcInterface));
 
 		return menuBar;
 	}
 
-	private static JMenu generateFileMenu(LMCInterface lmcInterface) {
+	private static JMenu generateFileMenu(AbstractGraphicalInterface lmcInterface) {
 		JMenu menu = new JMenu("File");
 
 		menu.add(generateSaveMenuItem(lmcInterface));
@@ -32,7 +32,7 @@ public class LMCMenuBar {
 		return menu;
 	}
 
-	private static JMenuItem generateSaveMenuItem(LMCInterface lmcInterface) {
+	private static JMenuItem generateSaveMenuItem(AbstractGraphicalInterface lmcInterface) {
 		JMenuItem itemSave = new JMenuItem("Save As");
 		itemSave.setAccelerator(KeyStroke.getKeyStroke('S', InputEvent.CTRL_DOWN_MASK));
 
@@ -50,7 +50,7 @@ public class LMCMenuBar {
 		return itemSave;
 	}
 
-	private static JMenuItem generateLoadMenuItem(LMCInterface lmcInterface) {
+	private static JMenuItem generateLoadMenuItem(AbstractGraphicalInterface lmcInterface) {
 		JMenuItem itemLoad = new JMenuItem("Load");
 		itemLoad.setAccelerator(KeyStroke.getKeyStroke('L', InputEvent.CTRL_DOWN_MASK));
 

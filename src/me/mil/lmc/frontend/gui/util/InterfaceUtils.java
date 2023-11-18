@@ -1,16 +1,17 @@
 package me.mil.lmc.frontend.gui.util;
 
 import com.formdev.flatlaf.FlatDarculaLaf;
-import me.mil.lmc.frontend.gui.LMCInterface;
+import me.mil.lmc.frontend.gui.AbstractGraphicalInterface;
+import me.mil.lmc.frontend.gui.LMCGraphicalInterface;
 
 import java.awt.*;
 import java.util.Arrays;
 
 public class InterfaceUtils {
 
-	public static LMCInterface createInterface() {
+	public static AbstractGraphicalInterface createInterface() {
 		initLookAndFeel();
-		return new LMCInterface();
+		return new LMCGraphicalInterface();
 	}
 
 	protected static void initLookAndFeel() {
@@ -23,7 +24,7 @@ public class InterfaceUtils {
 	}
 
 	public static String padInteger(int input, char ch, int length) {
-		return ((input<0) ? "-" : "") + String.format("%" + ch + length + "d", Math.abs(input)); // TODO fix bug wherein negative nums are cut off in RAM Units
+		return ((input<0) ? "-" : "") + String.format("%" + ch + length + "d", Math.abs(input));
 	}
 
 	public static String padInteger(int input) { // Default values

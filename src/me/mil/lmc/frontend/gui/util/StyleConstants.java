@@ -18,6 +18,7 @@ public class StyleConstants {
 
 	public static final Color COLOR_MEMORY_UNIT_ID_BACKGROUND = new Color(44, 45, 47);
 	public static final Color COLOR_MEMORY_UNIT_ID_FOREGROUND = new Color(150, 150, 150);
+	public static final Color COLOR_MEMORY_UNIT_ID_FOREGROUND_UPDATED = COLOR_CONTROL_PANEL_UNRESTRICTED_CLOCK_SPEED_FOREGROUND;
 
 	public static final Color COLOR_MEMORY_UNIT_OPCODE_FOREGROUND = new Color(195, 195, 195);
 

@@ -2,8 +2,6 @@ package me.mil.lmc.frontend.gui;
 
 import me.mil.lmc.LMCReader;
 import me.mil.lmc.LMCWriter;
-import me.mil.lmc.backend.AbstractObservableProcessor;
-
 import me.mil.lmc.backend.LMCProcessor;
 import me.mil.lmc.backend.exceptions.LMCException;
 import me.mil.lmc.backend.exceptions.LMCRuntimeException;
@@ -14,8 +12,7 @@ import javax.swing.*;
 import java.util.ArrayList;
 import java.util.List;
 
-// (not an interface) // todo convert to abstract class/interface for less unnecessary functions/fields visible here
-public class LMCInterface {
+public abstract class AbstractGraphicalInterface {
 
 	private final JFrame frame;
 
@@ -34,14 +31,16 @@ public class LMCInterface {
 	private LMCReader reader;
 	private LMCWriter writer;
 
-	private LMCProcessor processor;
+	private final LMCProcessor processor;
 	private final List<LMCProcessorObserver> processorObservers = new ArrayList<>();
 
-	public LMCInterface() {
+	public AbstractGraphicalInterface() {
 		this.frame = generateFrame();
 
 		this.reader = new LMCGraphicalReader(this);
 		this.writer = new LMCGraphicalWriter(this);
+
+		this.processor = LMCProcessor.create(101, 0, reader, writer);
 
 		// Panels
 		this.rootPanel = new RootPanel(this);
@@ -55,20 +54,11 @@ public class LMCInterface {
 		this.controlPanel = new ControlPanel(this);
 		this.registerViewPanel = new RegisterViewPanel(this);
 		this.memoryViewPanel = new MemoryViewPanel(this);
-		//
+
 		frame.setVisible(true);
 	}
 
-	private JFrame generateFrame() {
-		JFrame frame = new JFrame();
-		frame.setTitle("LMC");
-		frame.setSize(1400, 800);
-		frame.setLocationRelativeTo(null); // Centre
-		frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-
-		frame.setJMenuBar(LMCMenuBar.generate(this));
-		return frame;
-	}
+	protected abstract JFrame generateFrame();
 
 	private void updateProcessorObservers() {
 		processorObservers.forEach(po -> po.setProcessor(processor));
@@ -142,8 +132,7 @@ public class LMCInterface {
 	}
 
 	protected void setProcessor(LMCProcessor newProcessor) {
-		this.processor = newProcessor;
-		updateProcessorObservers();
+//		this.processor = newProcessor;
+//		updateProcessorObservers();
 	}
-
 }

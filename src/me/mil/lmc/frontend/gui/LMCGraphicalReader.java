@@ -2,13 +2,11 @@ package me.mil.lmc.frontend.gui;
 
 import me.mil.lmc.LMCReader;
 
-import java.util.concurrent.CompletableFuture;
-
 public class LMCGraphicalReader implements LMCReader {
 
-	private final LMCInterface lmcInterface;
+	private final AbstractGraphicalInterface lmcInterface;
 
-	public LMCGraphicalReader(LMCInterface lmcInterface) {
+	public LMCGraphicalReader(AbstractGraphicalInterface lmcInterface) {
 		this.lmcInterface = lmcInterface;
 	}
 
@@ -30,7 +28,7 @@ public class LMCGraphicalReader implements LMCReader {
 		}
 	}
 
-	private LMCInterface getInterface() {
+	private AbstractGraphicalInterface getInterface() {
 		return lmcInterface;
 	}
 }

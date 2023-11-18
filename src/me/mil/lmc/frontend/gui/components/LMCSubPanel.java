@@ -1,10 +1,10 @@
 package me.mil.lmc.frontend.gui.components;
 
-import me.mil.lmc.frontend.gui.LMCInterface;
+import me.mil.lmc.frontend.gui.AbstractGraphicalInterface;
 
 public abstract class LMCSubPanel extends LMCPanel{
 
-	public LMCSubPanel(LMCInterface lmcInterface) {
+	public LMCSubPanel(AbstractGraphicalInterface lmcInterface) {
 		super(lmcInterface);
 
 		if(lmcInterface.getRootPanel() == null) {

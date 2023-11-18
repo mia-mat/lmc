@@ -12,7 +12,7 @@ public class LMCCompilationException extends LMCException {
 	}
 
 	public LMCCompilationException(String reason) {
-		super("An error has occurred attempting to compile the program!" + ((reason == null) ? "" : "(" + reason + ")"));
+		super("An error has occurred attempting to compile the program! " + ((reason == null) ? "" : "(" + reason + ")"));
 	}
 
 	public LMCCompilationException() {

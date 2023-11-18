@@ -59,6 +59,8 @@ public abstract class AbstractProcessor implements Processor {
 
 	@Override
 	public void prepareRun() {
+		clearRegisters();
+
 		setHalting(false);
 		setRunning(true);
 	}
@@ -92,17 +94,18 @@ public abstract class AbstractProcessor implements Processor {
 	public ArrayList<Runnable> getInstructionCycle() {
 		return new ArrayList<Runnable>(){{
 			add(() -> { // Fetch
-				setRegister(RegisterType.MEMORY_ADDRESS_REGISTER, getRegisterValue(RegisterType.PROGRAM_COUNTER));
-				setRegister(RegisterType.PROGRAM_COUNTER, (int) getRegisterValue(RegisterType.PROGRAM_COUNTER)+1);
-//				setRegister(RegisterType.CURRENT_INSTRUCTION_REGISTER, getRegisterValue(RegisterType.MEMORY_DATA_REGISTER)); // TODO make CIR useful again
+				setRegister(RegisterType.MEMORY_ADDRESS_REGISTER, getRegisterValue(RegisterType.PROGRAM_COUNTER)); // MAR -> PC
+				setRegister(RegisterType.PROGRAM_COUNTER, (int) getRegisterValue(RegisterType.PROGRAM_COUNTER)+1); // PC++
 			});
 
 			add(() -> { // Decode
-				setRegister(RegisterType.MEMORY_DATA_REGISTER, Instruction.fromCode(getMemorySlotValue((int) getRegisterValue(RegisterType.MEMORY_ADDRESS_REGISTER))));
+				setRegister(RegisterType.MEMORY_DATA_REGISTER, getMemorySlotValue((int) getRegisterValue(RegisterType.MEMORY_ADDRESS_REGISTER))); // INS -> MDR
+				setRegister(RegisterType.CURRENT_INSTRUCTION_REGISTER, Instruction.fromCode((int)getRegisterValue(RegisterType.MEMORY_DATA_REGISTER))); // MDR -> CIR (split into opcode/operand)
+
 			});
 
 			add(() -> { // Execute
-				Pair<Instruction, Integer> instruction = (Pair<Instruction, Integer>) getRegisterValue(RegisterType.MEMORY_DATA_REGISTER);
+				Pair<Instruction, Integer> instruction = (Pair<Instruction, Integer>) getRegisterValue(RegisterType.CURRENT_INSTRUCTION_REGISTER);
 				instruction.getA().execute(AbstractProcessor.this, instruction.getB());
 			});
 
@@ -122,7 +125,7 @@ public abstract class AbstractProcessor implements Processor {
 			if (i < instructions.length) { // search only DAT
 				if (instruction.equals(Instruction.DAT)) {
 					if (parameter != null) {
-						setMemorySlot(i, getMaybeLabelledMemorySlotID(parameter));
+						setMemorySlot(i, getMemoryID(parameter));
 					}
 				}
 			}
@@ -130,7 +133,7 @@ public abstract class AbstractProcessor implements Processor {
 			if (i >= instructions.length) { // search only non-DAT.
 				if (instruction.equals(Instruction.DAT)) continue;
 				int code = instruction.requiresParameter()
-						? instruction.getCode(getMaybeLabelledMemorySlotID(parameter))
+						? instruction.getCode(getMemoryID(parameter))
 						: instruction.getCode();
 				setMemorySlot(correctedI, code);
 			}
@@ -147,9 +150,9 @@ public abstract class AbstractProcessor implements Processor {
 	 * If neither, throws a fun exception.
 	 */
 	@Override
-	public int getMaybeLabelledMemorySlotID(String potentialLabel) throws LMCRuntimeException { // TODO rename
+	public int getMemoryID(String potentialLabel) throws LMCRuntimeException {
 		try {
-			return Integer.parseInt(potentialLabel);
+			return Integer.parseInt(potentialLabel); // xxx format
 		} catch (NumberFormatException e) {    // not a number
 			if (labels.containsKey(potentialLabel)) {
 				return labels.get(potentialLabel);
@@ -187,10 +190,8 @@ public abstract class AbstractProcessor implements Processor {
 	@Override
 	public void setMemorySize(int memorySize) {
 		this.memory = new MemorySlot[memorySize];
-		for(int i = 0; i < memorySize; i++) {
-			memory[i] = new MemorySlot(0);
-		}
 		this.memorySize = memorySize;
+		clearMemory();
 	}
 
 	@Override
@@ -215,7 +216,7 @@ public abstract class AbstractProcessor implements Processor {
 
 	@Override
 	public void clearRegisters() {
-		Arrays.stream(RegisterType.values()).forEach(registerType -> registers[registerType.ordinal()] = new Register(0));
+		Arrays.stream(RegisterType.values()).forEach(registerType -> registers[registerType.ordinal()] = new Register(registerType.getDefault()));
 	}
 
 	@Override

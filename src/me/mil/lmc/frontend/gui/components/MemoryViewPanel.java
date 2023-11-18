@@ -1,10 +1,12 @@
 package me.mil.lmc.frontend.gui.components;
 
+import me.mil.lmc.backend.MemorySlot;
 import me.mil.lmc.backend.Processor;
 import me.mil.lmc.backend.ProcessorObserverNotification;
 import me.mil.lmc.backend.ProcessorObserverNotificationType;
+import me.mil.lmc.backend.util.Pair;
 import me.mil.lmc.frontend.gui.LMCProcessorObserver;
-import me.mil.lmc.frontend.gui.LMCInterface;
+import me.mil.lmc.frontend.gui.AbstractGraphicalInterface;
 import me.mil.lmc.frontend.gui.util.GBCBuilder;
 import me.mil.lmc.frontend.gui.util.InterfaceUtils;
 import me.mil.lmc.frontend.gui.util.StyleConstants;
@@ -13,6 +15,8 @@ import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.util.*;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public final class MemoryViewPanel extends LMCSubPanel {
 
@@ -20,7 +24,9 @@ public final class MemoryViewPanel extends LMCSubPanel {
 
 	private Container memoryUnitContainer;
 
-	public MemoryViewPanel(LMCInterface lmcInterface) {
+	private ExecutorService animationService;
+
+	public MemoryViewPanel(AbstractGraphicalInterface lmcInterface) {
 		super(lmcInterface);
 	}
 
@@ -34,6 +40,8 @@ public final class MemoryViewPanel extends LMCSubPanel {
 
 	@Override
 	protected void generate() {
+		this.animationService = Executors.newFixedThreadPool(100);
+
 		setLayout(new BorderLayout());
 		setBackground(StyleConstants.COLOR_MEMORY_VIEW_BACKGROUND);
 
@@ -53,8 +61,11 @@ public final class MemoryViewPanel extends LMCSubPanel {
 			@Override
 			public void onUpdate(Processor processor, ProcessorObserverNotification notification) {
 				SwingUtilities.invokeLater(() -> {
-					if(notification.getType() == ProcessorObserverNotificationType.SET_MEMORY
-							|| notification.getType() == ProcessorObserverNotificationType.CLEAR_MEMORY) {
+					if(notification.getType() == ProcessorObserverNotificationType.SET_MEMORY) {
+						Pair<Integer, MemorySlot> newVal = (Pair<Integer, MemorySlot>) notification.getNewValue();
+						memoryUnits.get(newVal.getA()).setOpCode(newVal.getB().getValue());
+					}
+					if(notification.getType() == ProcessorObserverNotificationType.CLEAR_MEMORY) {
 						memoryUnits.forEach((id, unit) -> unit.setOpCode(processor.getMemorySlotValue(id)));
 						return;
 					}
@@ -62,6 +73,7 @@ public final class MemoryViewPanel extends LMCSubPanel {
 					if(notification.getType() == ProcessorObserverNotificationType.SET_MEMORY_SIZE) {
 						resetMemoryUnits();
 					}
+
 				});
 			}
 		};
@@ -72,6 +84,7 @@ public final class MemoryViewPanel extends LMCSubPanel {
 	public void resetMemoryUnits() {
 		clearMemoryUnits();
 		instantiateMemoryUnits();
+		repaint();
 	}
 
 	public void instantiateMemoryUnits() {
@@ -90,14 +103,19 @@ public final class MemoryViewPanel extends LMCSubPanel {
 	public void removeMemoryUnit(int id) {
 		getMemoryUnitContainer().remove(memoryUnits.get(id));
 		memoryUnits.remove(id);
+		getMemoryUnitContainer().revalidate();
 	}
 
 	public void clearMemoryUnits() {
 		new HashSet<>(memoryUnits.keySet()).forEach(this::removeMemoryUnit);
 	}
 
-	protected Container getMemoryUnitContainer() {
+	Container getMemoryUnitContainer() {
 		return memoryUnitContainer;
+	}
+
+	private ExecutorService getAnimationService() {
+		return animationService;
 	}
 
 	private static class MemoryUnit extends LMCPanel {
@@ -105,7 +123,7 @@ public final class MemoryViewPanel extends LMCSubPanel {
 		private final int id;
 		private JLabel labelOpCode;
 
-		public MemoryUnit(LMCInterface lmcInterface, int id) {
+		public MemoryUnit(AbstractGraphicalInterface lmcInterface, int id) {
 			super(lmcInterface, false);
 			this.id = id;
 			generate();
@@ -131,8 +149,9 @@ public final class MemoryViewPanel extends LMCSubPanel {
 			panelOpCode.setPreferredSize(panelID.getPreferredSize());
 			panelOpCode.setSize(panelOpCode.getPreferredSize());
 
-			JLabel labelOpCode = new JLabel("000");
+			JLabel labelOpCode = new JLabel("000", SwingConstants.CENTER);
 			labelOpCode.setForeground(StyleConstants.COLOR_MEMORY_UNIT_OPCODE_FOREGROUND);
+			labelOpCode.setPreferredSize(panelOpCode.getPreferredSize());
 			panelOpCode.add(labelOpCode, new GridBagConstraints());
 
 			GBCBuilder gbcBuilder = new GBCBuilder().setAnchor(GBCBuilder.Anchor.NORTH).setFill(GBCBuilder.Fill.BOTH)
@@ -147,19 +166,18 @@ public final class MemoryViewPanel extends LMCSubPanel {
 			String oldText = labelOpCode.getText();
 			labelOpCode.setText(InterfaceUtils.padInteger(newOpCode));
 			if(!Objects.equals(oldText, labelOpCode.getText())){
-				playUpdateAnimation();
-
+				playUpdateAnimation(getInterface().getMemoryViewPanel().getAnimationService());
 			}
 			labelOpCode.paintImmediately(labelOpCode.getVisibleRect()); // refresh
 		}
 
 		private boolean animationPlaying = false;
-		public void playUpdateAnimation() { // TODO refactor, also, still buggy.
-			Color initColor = StyleConstants.COLOR_MEMORY_UNIT_OPCODE_FOREGROUND;
-			Color updateColor = new Color(128, 255, 119);
-
+		public void playUpdateAnimation(ExecutorService service) {
 			if(animationPlaying) return;
 			animationPlaying = true;
+
+			Color initColor = StyleConstants.COLOR_MEMORY_UNIT_OPCODE_FOREGROUND;
+			Color updateColor = StyleConstants.COLOR_MEMORY_UNIT_ID_FOREGROUND_UPDATED;
 
 			SwingWorker<Void, Void> worker = new SwingWorker<Void, Void>() {
 				@Override
@@ -171,7 +189,7 @@ public final class MemoryViewPanel extends LMCSubPanel {
 					return null;
 				}
 			};
-			worker.execute();
+			service.submit(worker);
 
 
 			animationPlaying = false;
@@ -179,10 +197,10 @@ public final class MemoryViewPanel extends LMCSubPanel {
 		}
 
 		private Color mixColours(Color color1, Color color2, double percent){
-			double inversePerc = 1.0 - percent;
-			int red = (int) (color1.getRed()*percent + color2.getRed()*inversePerc);
-			int green = (int) (color1.getGreen()*percent + color2.getGreen()*inversePerc);
-			int blue = (int) (color1.getBlue()*percent + color2.getBlue()*inversePerc);
+			final double inversePerc = 1.0 - percent;
+			final int red = (int) (color1.getRed()*percent + color2.getRed()*inversePerc);
+			final int green = (int) (color1.getGreen()*percent + color2.getGreen()*inversePerc);
+			final int blue = (int) (color1.getBlue()*percent + color2.getBlue()*inversePerc);
 			return new Color(red, green, blue);
 		}
 

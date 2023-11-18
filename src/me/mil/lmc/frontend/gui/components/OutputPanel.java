@@ -1,6 +1,10 @@
 package me.mil.lmc.frontend.gui.components;
 
-import me.mil.lmc.frontend.gui.LMCInterface;
+import me.mil.lmc.backend.ProcessorObserverNotification;
+import me.mil.lmc.backend.ProcessorObserverNotificationType;
+import me.mil.lmc.backend.util.Observable;
+import me.mil.lmc.frontend.gui.AbstractGraphicalInterface;
+import me.mil.lmc.frontend.gui.LMCProcessorObserver;
 import me.mil.lmc.frontend.gui.util.GBCBuilder;
 import me.mil.lmc.frontend.gui.util.StyleConstants;
 
@@ -11,7 +15,7 @@ public final class OutputPanel extends LMCSubPanel {
 
 	private JTextArea outputTextArea;
 
-	public OutputPanel(LMCInterface lmcInterface) {
+	public OutputPanel(AbstractGraphicalInterface lmcInterface) {
 		super(lmcInterface);
 	}
 
@@ -35,14 +39,28 @@ public final class OutputPanel extends LMCSubPanel {
 				.setWeight(1, 1).setPosition(0, 0).setCellsConsumed(1, 1).build());
 
 		outputTextArea = textArea;
+		new LMCProcessorObserver(getInterface()) {
+			@Override
+			public void onUpdate(Observable processor, ProcessorObserverNotification notification) {
+				if(notification.getType() == ProcessorObserverNotificationType.SET_HALTING && getInterface().getProcessor()!=null && getInterface().getProcessor().isHalting()) {
+					writeOutput("Program has finished executing.");
+					// Scroll to the bottom
+					SwingUtilities.invokeLater(() -> scrollPane.getViewport().setViewPosition(new Point(0, textArea.getDocument().getLength())));
+				}
+			}
+		};
 	}
 
 	public JTextArea getOutputTextArea() {
 		return outputTextArea;
 	}
 
-	public void writeOutput(int out) {
+	void writeOutput(String out) {
 		getOutputTextArea().setText(getOutputTextArea().getText()+out+"\n");
+	}
+
+	public void writeOutput(int out) {
+		writeOutput(Integer.toString(out));
 	}
 
 }

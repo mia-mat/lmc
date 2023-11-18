@@ -2,7 +2,7 @@ package me.mil.lmc.frontend.gui.components;
 
 import me.mil.lmc.backend.*;
 import me.mil.lmc.frontend.gui.LMCProcessorObserver;
-import me.mil.lmc.frontend.gui.LMCInterface;
+import me.mil.lmc.frontend.gui.AbstractGraphicalInterface;
 import me.mil.lmc.frontend.gui.util.GBCBuilder;
 import me.mil.lmc.frontend.gui.util.InterfaceUtils;
 import me.mil.lmc.frontend.gui.util.StyleConstants;
@@ -18,7 +18,7 @@ public final class RegisterViewPanel extends LMCSubPanel {
 
 	Map<RegisterType, RegisterPanel> registerObjects;
 
-	public RegisterViewPanel(LMCInterface lmcInterface) {
+	public RegisterViewPanel(AbstractGraphicalInterface lmcInterface) {
 		super(lmcInterface);
 	}
 
@@ -28,7 +28,7 @@ public final class RegisterViewPanel extends LMCSubPanel {
 		private JLabel registerLabel; // 'label label'
 		private JLabel valueLabel;
 
-		public RegisterPanel(LMCInterface lmcInterface, RegisterType registerType) {
+		public RegisterPanel(AbstractGraphicalInterface lmcInterface, RegisterType registerType) {
 			super(lmcInterface, false);
 			this.registerType = registerType;
 			generate();

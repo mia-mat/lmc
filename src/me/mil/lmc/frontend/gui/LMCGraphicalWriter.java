@@ -4,9 +4,9 @@ import me.mil.lmc.LMCWriter;
 
 public class LMCGraphicalWriter implements LMCWriter {
 
-	private final LMCInterface lmcInterface;
+	private final AbstractGraphicalInterface lmcInterface;
 
-	public LMCGraphicalWriter(LMCInterface lmcInterface) {
+	public LMCGraphicalWriter(AbstractGraphicalInterface lmcInterface) {
 		this.lmcInterface = lmcInterface;
 	}
 
@@ -15,7 +15,7 @@ public class LMCGraphicalWriter implements LMCWriter {
 		getInterface().getOutputPanel().writeOutput(out);
 	}
 
-	private LMCInterface getInterface() {
+	private AbstractGraphicalInterface getInterface() {
 		return lmcInterface;
 	}
 }

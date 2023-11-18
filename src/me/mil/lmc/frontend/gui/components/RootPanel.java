@@ -1,12 +1,12 @@
 package me.mil.lmc.frontend.gui.components;
 
-import me.mil.lmc.frontend.gui.LMCInterface;
+import me.mil.lmc.frontend.gui.AbstractGraphicalInterface;
 
 import java.awt.*;
 
 public class RootPanel extends LMCPanel{
 
-	public RootPanel(LMCInterface lmcInterface) {
+	public RootPanel(AbstractGraphicalInterface lmcInterface) {
 		super(lmcInterface);
 
 		lmcInterface.getFrame().add(this);

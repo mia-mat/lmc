@@ -6,10 +6,18 @@ import me.mil.lmc.backend.exceptions.LMCRuntimeException;
 import me.mil.lmc.backend.util.Observable;
 import me.mil.lmc.backend.util.Pair;
 
+import java.util.Arrays;
+
 public abstract class AbstractObservableProcessor extends AbstractProcessor implements Observable {
 
-	public AbstractObservableProcessor(ProcessorInstruction[] instructions, int memorySize, LMCReader reader, LMCWriter writer) {
+	private final boolean observeUnchanged;
+
+	public AbstractObservableProcessor(ProcessorInstruction[] instructions, int memorySize, LMCReader reader, LMCWriter writer, boolean observeUnchangedValues) {
 		super(instructions, memorySize, reader, writer);
+		this.observeUnchanged = observeUnchangedValues;
+	}
+	public AbstractObservableProcessor(ProcessorInstruction[] instructions, int memorySize, LMCReader reader, LMCWriter writer) {
+		this(instructions, memorySize, reader, writer, false);
 	}
 
 	@Override
@@ -22,7 +30,7 @@ public abstract class AbstractObservableProcessor extends AbstractProcessor impl
 	public void clearRegisters() {
 		MemorySlot[] old = getMemory().clone();
 		super.clearRegisters();
-		update(new ProcessorObserverNotification(ProcessorObserverNotificationType.CLEAR_REGISTERS, old, getMemory()));
+		if(observeUnchanged || !Arrays.equals(getMemory(), old)) update(new ProcessorObserverNotification(ProcessorObserverNotificationType.CLEAR_REGISTERS, old, getMemory()));
 	}
 
 	@Override
@@ -35,55 +43,55 @@ public abstract class AbstractObservableProcessor extends AbstractProcessor impl
 	public void setMemorySlot(int id, int newValue) {
 		int old = getMemorySlotValue(id);
 		super.setMemorySlot(id, newValue);
-		update(new ProcessorObserverNotification(ProcessorObserverNotificationType.SET_MEMORY, new Pair<>(id, old), new Pair<>(id, getMemorySlot(id))));
+		if(observeUnchanged || old!=getMemorySlotValue(id)) update(new ProcessorObserverNotification(ProcessorObserverNotificationType.SET_MEMORY, new Pair<>(id, old), new Pair<>(id, getMemorySlot(id))));
 	}
 
 	@Override
 	public void setRegister(RegisterType registerType, Object newValue) {
 		Object old = getRegister(registerType);
 		super.setRegister(registerType, newValue);
-		update(new ProcessorObserverNotification(ProcessorObserverNotificationType.SET_REGISTER, new Pair<>(registerType, old), new Pair<>(registerType, getRegisterValue(registerType))));
+		if(observeUnchanged || !getRegister(registerType).equals(old)) update(new ProcessorObserverNotification(ProcessorObserverNotificationType.SET_REGISTER, new Pair<>(registerType, old), new Pair<>(registerType, getRegisterValue(registerType))));
 	}
 
 	@Override
 	public void setMemorySize(int memorySize) {
 		int old = getMemorySize();
 		super.setMemorySize(memorySize);
-		update(new ProcessorObserverNotification(ProcessorObserverNotificationType.SET_MEMORY_SIZE, old, getMemorySize()));
+		if(observeUnchanged || old!=getMemorySize()) update(new ProcessorObserverNotification(ProcessorObserverNotificationType.SET_MEMORY_SIZE, old, getMemorySize()));
 	}
 
 	@Override
 	public void setReader(LMCReader reader) {
 		LMCReader old = getReader();
 		super.setReader(reader);
-		update(new ProcessorObserverNotification(ProcessorObserverNotificationType.SET_READER, old, getReader()));
+		if(observeUnchanged || !getReader().equals(old)) update(new ProcessorObserverNotification(ProcessorObserverNotificationType.SET_READER, old, getReader()));
 	}
 
 	@Override
 	public void setWriter(LMCWriter writer) {
 		LMCWriter old = getWriter();
 		super.setWriter(writer);
-		update(new ProcessorObserverNotification(ProcessorObserverNotificationType.SET_WRITER, old, getWriter()));
+		if(observeUnchanged || !old.equals(getWriter())) update(new ProcessorObserverNotification(ProcessorObserverNotificationType.SET_WRITER, old, getWriter()));
 	}
 
 	@Override
 	public void setHalting(boolean halting) {
 		boolean old = isHalting();
 		super.setHalting(halting);
-		update(new ProcessorObserverNotification(ProcessorObserverNotificationType.SET_HALTING, old, isHalting()));
+		if(observeUnchanged || isHalting()!=old) update(new ProcessorObserverNotification(ProcessorObserverNotificationType.SET_HALTING, old, isHalting()));
 	}
 
 	@Override
 	public void setRunning(boolean running) {
 		boolean old = isRunning();
 		super.setRunning(running);
-		update(new ProcessorObserverNotification(ProcessorObserverNotificationType.SET_RUNNING, old, isRunning()));
+		if(observeUnchanged || isRunning()!=old) update(new ProcessorObserverNotification(ProcessorObserverNotificationType.SET_RUNNING, old, isRunning()));
 	}
 
 	@Override
 	public void setInstructions(ProcessorInstruction[] instructions) {
-		ProcessorInstruction[] old = getInstructions();
+		ProcessorInstruction[] old = getInstructions().clone();
 		super.setInstructions(instructions);
-		update(new ProcessorObserverNotification(ProcessorObserverNotificationType.SET_INSTRUCTIONS, old, getInstructions()));
+		if(observeUnchanged || !Arrays.equals(getInstructions(), old)) update(new ProcessorObserverNotification(ProcessorObserverNotificationType.SET_INSTRUCTIONS, old, getInstructions()));
 	}
 }

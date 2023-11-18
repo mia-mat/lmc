@@ -1,8 +1,8 @@
 package me.mil.lmc.frontend.gui;
 
-import me.mil.lmc.backend.LMCProcessor;
 import me.mil.lmc.backend.exceptions.LMCCompilationException;
 import me.mil.lmc.backend.exceptions.LMCRuntimeException;
+import me.mil.lmc.frontend.gui.util.DialogMessageType;
 
 import java.util.*;
 import java.util.function.Consumer;
@@ -10,11 +10,15 @@ import java.util.function.Consumer;
 public enum ControlFunction {
 	COMPILE(3, (lmcInterface) -> {
 		try {
-			lmcInterface.setProcessor(LMCProcessor.compileInstructions(lmcInterface.getInputPanel().getText(),
-					lmcInterface.getControlPanel().getRequestedMemorySize(), lmcInterface.getControlPanel().getRequestedClockSpeed(),
-					lmcInterface.getReader(), lmcInterface.getWriter()));
-
-			lmcInterface.getMemoryViewPanel().resetMemoryUnits();
+			lmcInterface.getProcessor().compileAndSetInstructions(lmcInterface.getInputPanel().getText());
+			if(lmcInterface.getControlPanel().getRequestedMemorySize() < 1) {
+				lmcInterface.showMessageDialog("Oops", "Memory Size must be greater than 0.\nProceeding without updating processor specifications.", DialogMessageType.WARNING_MESSAGE);
+				return;
+			}
+			lmcInterface.getProcessor().setMemorySize(lmcInterface.getControlPanel().getRequestedMemorySize());
+			lmcInterface.getProcessor().setClockSpeed(lmcInterface.getControlPanel().getRequestedClockSpeed());
+			lmcInterface.getProcessor().setReader(lmcInterface.getReader());
+			lmcInterface.getProcessor().setWriter(lmcInterface.getWriter());
 
 		} catch (LMCCompilationException e) {
 			lmcInterface.showErrorDialog(e);
@@ -38,18 +42,18 @@ public enum ControlFunction {
 	}, CLEAR_RAM, LOAD_INTO_RAM),
 	STOP(-1, (lmc) -> lmc.getProcessor().forceHalt());
 
-	private final Consumer<LMCInterface> action;
+	private final Consumer<AbstractGraphicalInterface> action;
 	private final ControlFunction[] inheritedFunctions;
 	private final int priority;
 
-	ControlFunction(int priority, Consumer<LMCInterface> action, ControlFunction... inheritedFunctions) {
+	ControlFunction(int priority, Consumer<AbstractGraphicalInterface> action, ControlFunction... inheritedFunctions) {
 		this.action = action;
 		this.inheritedFunctions = inheritedFunctions;
 		this.priority = priority;
 	}
 
 
-	public void executeAction(LMCInterface lmcInterface) {
+	public void executeAction(AbstractGraphicalInterface lmcInterface) {
 		getAllFunctions().stream().sorted(Comparator.comparingInt(ControlFunction::getPriority).reversed()).forEach(a -> a.action.accept(lmcInterface));
 	}
 

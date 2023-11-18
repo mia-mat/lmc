@@ -3,6 +3,8 @@ package me.mil.lmc.frontend.gui.components;
 import javax.swing.*;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.util.Optional;
+import java.util.function.Consumer;
 
 public class IntegerInputKeyAdapter extends KeyAdapter {
 
@@ -11,13 +13,19 @@ public class IntegerInputKeyAdapter extends KeyAdapter {
 	private final JTextField textField;
 	private final int charLimit;
 	private final int emptyValue;
+	private final Optional<Consumer<KeyEvent>> consumer;
 
-	public IntegerInputKeyAdapter(JTextField textField, int charLimit, int emptyValue) {
+	public IntegerInputKeyAdapter(JTextField textField, int charLimit, int emptyValue, Consumer<KeyEvent> consumer) {
 		this.textField = textField;
 		this.charLimit = charLimit;
 		this.emptyValue = emptyValue;
+		this.consumer = Optional.ofNullable(consumer);
 
 		textField.setTransferHandler(null); // Disable Copy / Paste.
+	}
+
+	public IntegerInputKeyAdapter(JTextField textField, int charLimit, int emptyValue) {
+		this(textField, charLimit, emptyValue, null);
 	}
 
 	public IntegerInputKeyAdapter(JTextField textField, int charLimit) {
@@ -32,8 +40,7 @@ public class IntegerInputKeyAdapter extends KeyAdapter {
 		return textField;
 	}
 
-	@Override
-	public void keyTyped(KeyEvent e) {
+	private void process(KeyEvent e) {
 		e.consume(); // don't pass on
 		char keyChar = e.getKeyChar();
 		String text = textField.getText();
@@ -53,6 +60,12 @@ public class IntegerInputKeyAdapter extends KeyAdapter {
 
 		textField.setSelectionStart(newCaretPosition);
 		textField.setSelectionEnd(newCaretPosition);
+	}
+
+	@Override
+	public void keyTyped(KeyEvent e) {
+		process(e);
+		consumer.ifPresent(c -> c.accept(e));
 	}
 
 }

@@ -1,6 +1,6 @@
 package me.mil.lmc.frontend.gui.components;
 
-import me.mil.lmc.frontend.gui.LMCInterface;
+import me.mil.lmc.frontend.gui.AbstractGraphicalInterface;
 import me.mil.lmc.frontend.gui.util.GBCBuilder;
 import me.mil.lmc.frontend.gui.util.InterfaceUtils;
 import me.mil.lmc.frontend.gui.util.StyleConstants;
@@ -8,14 +8,13 @@ import me.mil.lmc.frontend.gui.util.StyleConstants;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
-import java.awt.event.KeyEvent;
 
 public final class ControlPanel extends LMCSubPanel {
 
 	private JTextField textFieldMemorySize;
 	private JTextField textFieldClockSpeed;
 
-	public ControlPanel(LMCInterface lmcInterface) {
+	public ControlPanel(AbstractGraphicalInterface lmcInterface) {
 		super(lmcInterface);
 	}
 
@@ -66,16 +65,11 @@ public final class ControlPanel extends LMCSubPanel {
 
 		JTextField textFieldClockSpeed = new JTextField("0");
 
-		// todo make this more elegant
-		textFieldClockSpeed.addKeyListener(new IntegerInputKeyAdapter(textFieldClockSpeed, 5) { // Set restrictions
-			@Override
-			public void keyTyped(KeyEvent e) {
-				super.keyTyped(e);
-				int input = Integer.parseInt(textFieldClockSpeed.getText());
-				labelClockSpeedUnrestricted.setVisible(input == 0); // Correct visibility of unrestricted text
-				if(getInterface().getProcessor() != null) getInterface().getProcessor().setClockSpeed(input);
-			}
-		});
+		textFieldClockSpeed.addKeyListener(new IntegerInputKeyAdapter(textFieldClockSpeed, 5, 0, (keyEvent) -> {
+			int input = Integer.parseInt(textFieldClockSpeed.getText());
+			labelClockSpeedUnrestricted.setVisible(input == 0); // Correct visibility of unrestricted text
+			if(getInterface().getProcessor() != null) getInterface().getProcessor().setClockSpeed(input);
+		}));
 		this.textFieldClockSpeed = textFieldClockSpeed;
 
 		parent.add(labelClockSpeed);

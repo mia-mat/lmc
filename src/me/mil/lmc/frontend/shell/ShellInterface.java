@@ -66,7 +66,7 @@ public class ShellInterface {
 
 	private void loadFromFile(File file) throws IOException {
 		try {
-			setProcessor(LMCProcessor.compileInstructions(
+			setProcessor(LMCProcessor.compileIntoProcessor(
 					String.join("\n", Files.readAllLines(file.toPath(), StandardCharsets.UTF_8)),
 					memorySize, clockSpeed, getReader(), getWriter()));
 			System.out.println("Loading instructions into memory...");
@@ -121,7 +121,6 @@ public class ShellInterface {
 			promptLoad();
 		}
 	}
-
 
 	public LMCReader getReader() {
 		return reader;

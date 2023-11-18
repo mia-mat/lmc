@@ -5,7 +5,7 @@ import me.mil.lmc.backend.ProcessorObserver;
 // For integration with LMCInterface
 public class LMCProcessorObserver extends ProcessorObserver {
 
-	public LMCProcessorObserver(LMCInterface lmcInterface) {
+	public LMCProcessorObserver(AbstractGraphicalInterface lmcInterface) {
 		super(lmcInterface.getProcessor());
 		lmcInterface.addProcessorObserver(this);
 	}

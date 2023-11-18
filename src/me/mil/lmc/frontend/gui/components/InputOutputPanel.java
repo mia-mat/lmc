@@ -1,6 +1,6 @@
 package me.mil.lmc.frontend.gui.components;
 
-import me.mil.lmc.frontend.gui.LMCInterface;
+import me.mil.lmc.frontend.gui.AbstractGraphicalInterface;
 import me.mil.lmc.frontend.gui.util.GBCBuilder;
 
 import java.awt.*;
@@ -11,7 +11,7 @@ public class InputOutputPanel extends LMCSubPanel {
 	InputPanel inputPanel;
 	OutputPanel outputPanel;
 
-	public InputOutputPanel(LMCInterface lmcInterface) {
+	public InputOutputPanel(AbstractGraphicalInterface lmcInterface) {
 		super(lmcInterface);
 	}
 

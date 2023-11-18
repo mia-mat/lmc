@@ -31,11 +31,14 @@ public class LMCProcessor extends AbstractObservableClockedProcessor{
 	public void run() {
 		instructionCycleCount = 0;
 		super.run();
+
 	}
 
-	public static LMCProcessor compileInstructions(String input, int memorySize, int clockSpeed, LMCReader reader, LMCWriter writer) throws LMCCompilationException {
-		if (memorySize < 1) throw new LMCCompilationException("Invalid RAM Size. (" + memorySize + ")");
+	public void compileAndSetInstructions(String input) throws LMCCompilationException {
+		setInstructions(compile(input));
+	}
 
+	public static ProcessorInstruction[] compile(String input) throws LMCCompilationException {
 		// convert tabs to spaces
 		input = input.replaceAll("\t", " ");
 
@@ -91,7 +94,16 @@ public class LMCProcessor extends AbstractObservableClockedProcessor{
 					throw new LMCCompilationException(i + 1, "Invalid number of parameters");
 			}
 		}
-		return new LMCProcessor(instructions.toArray(new ProcessorInstruction[0]), memorySize, clockSpeed, reader, writer);
+		return instructions.toArray(new ProcessorInstruction[0]);
+	}
+
+	public static LMCProcessor compileIntoProcessor(String input, int memorySize, int clockSpeed, LMCReader reader, LMCWriter writer) throws LMCCompilationException {
+		if (memorySize < 1) throw new LMCCompilationException("Invalid RAM Size. (" + memorySize + ")");
+		return new LMCProcessor(compile(input), memorySize, clockSpeed, reader, writer);
+	}
+
+	public static LMCProcessor create(int memorySize, int clockSpeed, LMCReader reader, LMCWriter writer) {
+		return new LMCProcessor(new ProcessorInstruction[0], memorySize, clockSpeed, reader, writer);
 	}
 
 }
