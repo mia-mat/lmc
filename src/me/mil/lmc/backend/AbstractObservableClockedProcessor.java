@@ -61,7 +61,6 @@ public abstract class AbstractObservableClockedProcessor extends AbstractClocked
 
 	@Override
 	public void setMemorySize(int memorySize) {
-		System.out.println(memorySize);
 		int old = getMemorySize();
 		super.setMemorySize(memorySize);
 		if(observeUnchanged || old!=getMemorySize()) update(new ProcessorObserverNotification(ProcessorObserverNotificationType.SET_MEMORY_SIZE, old, getMemorySize()));

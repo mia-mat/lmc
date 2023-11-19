@@ -77,7 +77,7 @@ public class ShellInterface {
 				Thread.sleep(10);
 			}
 			System.out.println("Finished executing program.");
-			if(processor instanceof LMCProcessor) {
+			if (processor instanceof LMCProcessor) {
 				System.out.println("Instruction cycle count: " + ((LMCProcessor) processor).getInstructionCycleCount());
 			}
 			System.out.println();

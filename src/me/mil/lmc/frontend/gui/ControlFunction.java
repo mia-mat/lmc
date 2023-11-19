@@ -4,14 +4,16 @@ import me.mil.lmc.backend.exceptions.LMCCompilationException;
 import me.mil.lmc.backend.exceptions.LMCRuntimeException;
 import me.mil.lmc.frontend.gui.util.DialogMessageType;
 
-import java.util.*;
+import java.util.Comparator;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.function.Consumer;
 
 public enum ControlFunction {
 	COMPILE(3, (lmcInterface) -> {
 		try {
 			lmcInterface.getProcessor().compileAndSetInstructions(lmcInterface.getInputPanel().getText());
-			if(lmcInterface.getControlPanel().getRequestedMemorySize() < 1) {
+			if (lmcInterface.getControlPanel().getRequestedMemorySize() < 1) {
 				lmcInterface.showMessageDialog("Oops", "Memory Size must be greater than 0.\nProceeding without updating processor specifications.", DialogMessageType.WARNING_MESSAGE);
 				return;
 			}

@@ -21,9 +21,9 @@ public class LMCGraphicalReader implements LMCReader {
 	}
 
 	private int promptForInt(String msg) {
-		try{
+		try {
 			return Integer.parseInt(getInterface().showInputDialog(msg));
-		}catch (NumberFormatException e) {
+		} catch (NumberFormatException e) {
 			return promptForInt("Please provide an integer.");
 		}
 	}

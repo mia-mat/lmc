@@ -9,8 +9,6 @@ import me.mil.lmc.frontend.gui.components.*;
 import me.mil.lmc.frontend.gui.util.DialogMessageType;
 
 import javax.swing.*;
-import java.util.ArrayList;
-import java.util.List;
 
 public abstract class AbstractGraphicalInterface {
 
@@ -32,7 +30,6 @@ public abstract class AbstractGraphicalInterface {
 	private LMCWriter writer;
 
 	private final LMCProcessor processor;
-	private final List<LMCProcessorObserver> processorObservers = new ArrayList<>();
 
 	public AbstractGraphicalInterface() {
 		this.frame = generateFrame();
@@ -59,14 +56,6 @@ public abstract class AbstractGraphicalInterface {
 	}
 
 	protected abstract JFrame generateFrame();
-
-	private void updateProcessorObservers() {
-		processorObservers.forEach(po -> po.setProcessor(processor));
-	}
-
-	protected void addProcessorObserver(LMCProcessorObserver processorObserver) {
-		processorObservers.add(processorObserver);
-	}
 
 	public void performControlFunction(ControlFunction function) {
 		function.executeAction(this);
@@ -131,8 +120,4 @@ public abstract class AbstractGraphicalInterface {
 		return processor;
 	}
 
-	protected void setProcessor(LMCProcessor newProcessor) {
-//		this.processor = newProcessor;
-//		updateProcessorObservers();
-	}
 }

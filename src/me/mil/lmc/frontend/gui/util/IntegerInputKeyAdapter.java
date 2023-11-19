@@ -1,4 +1,4 @@
-package me.mil.lmc.frontend.gui.components;
+package me.mil.lmc.frontend.gui.util;
 
 import javax.swing.*;
 import java.awt.event.KeyAdapter;

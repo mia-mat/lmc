@@ -6,10 +6,7 @@ public interface ClockedProcessor {
 
 	void addToRunnableQueue(Runnable r);
 	Queue<Runnable> getRunnableQueue();
-
-
 	int getClockSpeed();
 	void setClockSpeed(int newValue);
-
 
 }

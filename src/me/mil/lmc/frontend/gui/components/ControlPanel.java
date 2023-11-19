@@ -2,6 +2,7 @@ package me.mil.lmc.frontend.gui.components;
 
 import me.mil.lmc.frontend.gui.AbstractGraphicalInterface;
 import me.mil.lmc.frontend.gui.util.GBCBuilder;
+import me.mil.lmc.frontend.gui.util.IntegerInputKeyAdapter;
 import me.mil.lmc.frontend.gui.util.InterfaceUtils;
 import me.mil.lmc.frontend.gui.util.StyleConstants;
 
@@ -42,7 +43,7 @@ public final class ControlPanel extends LMCSubPanel {
 		this.add(panelRow1, new GBCBuilder().setAnchor(GBCBuilder.Anchor.NORTH).setFill(GBCBuilder.Fill.HORIZONTAL)
 				.setWeight(1, 0).setPosition(0, 0).setCellsConsumed(1, 1).build());
 		this.add(panelRow2, new GBCBuilder().setAnchor(GBCBuilder.Anchor.NORTH).setFill(GBCBuilder.Fill.HORIZONTAL)
-				.setWeight(1, 1).setPosition(0, 1).setCellsConsumed(1,1).build());
+				.setWeight(1, 1).setPosition(0, 1).setCellsConsumed(1, 1).build());
 	}
 
 	private void generateMemorySizeComponents(JPanel parent) {
@@ -68,7 +69,7 @@ public final class ControlPanel extends LMCSubPanel {
 		textFieldClockSpeed.addKeyListener(new IntegerInputKeyAdapter(textFieldClockSpeed, 5, 0, (keyEvent) -> {
 			int input = Integer.parseInt(textFieldClockSpeed.getText());
 			labelClockSpeedUnrestricted.setVisible(input == 0); // Correct visibility of unrestricted text
-			if(getInterface().getProcessor() != null) getInterface().getProcessor().setClockSpeed(input);
+			if (getInterface().getProcessor() != null) getInterface().getProcessor().setClockSpeed(input);
 		}));
 		this.textFieldClockSpeed = textFieldClockSpeed;
 

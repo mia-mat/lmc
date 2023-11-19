@@ -10,6 +10,7 @@ public class ProcessorObserverNotification {
 		this.oldVal = oldVal;
 		this.newVal = newVal;
 	}
+
 	public ProcessorObserverNotification(ProcessorObserverNotificationType type) {
 		this(type, null, null);
 	}

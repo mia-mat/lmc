@@ -12,8 +12,9 @@ public abstract class LMCPanel extends JPanel {
 		this.lmcInterface = lmcInterface;
 
 		// Sometimes it may be necessary to generate after calling super(), as some other values may be passed in which are needed in the generate method, and super() needs to be called first in the constructor (annoyingly).
-		if(autoGenerate) generate();
+		if (autoGenerate) generate();
 	}
+
 	public LMCPanel(AbstractGraphicalInterface lmcInterface) {
 		this(lmcInterface, true);
 	}

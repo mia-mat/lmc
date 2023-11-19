@@ -9,12 +9,10 @@ public enum RegisterType {
 	CURRENT_INSTRUCTION_REGISTER(Pair.class, "CIR", false, new Pair<>(Instruction.HLT, null)), // Not displayed due to nature of data stored
 	ACCUMULATOR(Integer.class, "ACC");
 
-
 	private final String uiName;
 	private final Class<?> dataTypeStored;
 	private final Object defaultData;
 	private final boolean display;
-
 
 	RegisterType(Class<?> dataTypeStored, String uiName, boolean display, Object defaultData) {
 		this.dataTypeStored = dataTypeStored;
@@ -22,9 +20,11 @@ public enum RegisterType {
 		this.display = display;
 		this.defaultData = defaultData;
 	}
+
 	RegisterType(Class<?> dataTypeStored, Object defaultData, String uiName) {
 		this(dataTypeStored, uiName, true, defaultData);
 	}
+
 	RegisterType(Class<?> dataTypeStored, String uiName) {
 		this(dataTypeStored, uiName, true, 0);
 	}

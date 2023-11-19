@@ -5,7 +5,10 @@ import me.mil.lmc.LMCWriter;
 import me.mil.lmc.backend.exceptions.LMCRuntimeException;
 import me.mil.lmc.backend.util.Pair;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
 // Adds basic capabilities of a processor
 public abstract class AbstractProcessor implements Processor {
@@ -13,7 +16,7 @@ public abstract class AbstractProcessor implements Processor {
 	private int memorySize;
 	private MemorySlot[] memory;
 
-	private Register[] registers;
+	private final Register[] registers;
 
 	private final Map<String, Integer> labels;
 	ProcessorInstruction[] instructions;
@@ -50,7 +53,7 @@ public abstract class AbstractProcessor implements Processor {
 	public void run() {
 		prepareRun();
 
-		while(!isHalting()) {
+		while (!isHalting()) {
 			performNextInstructionStep();
 		}
 
@@ -69,6 +72,9 @@ public abstract class AbstractProcessor implements Processor {
 	public void finalizeRun() {
 		setRunning(false);
 		setHalting(false);
+
+		clearInstructions();
+		resetInstructionCycle();
 	}
 
 	@Override
@@ -80,7 +86,7 @@ public abstract class AbstractProcessor implements Processor {
 	public void performNextInstructionStep() {
 		getInstructionCycle().get(getInstructionCycleProgress()).run();
 		instructionCycleProgress++;
-		if(getInstructionCycleProgress() >= getInstructionCycle().size()) {
+		if (getInstructionCycleProgress() >= getInstructionCycle().size()) {
 			resetInstructionCycle();
 		}
 	}
@@ -92,15 +98,15 @@ public abstract class AbstractProcessor implements Processor {
 
 	@Override
 	public ArrayList<Runnable> getInstructionCycle() {
-		return new ArrayList<Runnable>(){{
+		return new ArrayList<Runnable>() {{
 			add(() -> { // Fetch
 				setRegister(RegisterType.MEMORY_ADDRESS_REGISTER, getRegisterValue(RegisterType.PROGRAM_COUNTER)); // MAR -> PC
-				setRegister(RegisterType.PROGRAM_COUNTER, (int) getRegisterValue(RegisterType.PROGRAM_COUNTER)+1); // PC++
+				setRegister(RegisterType.PROGRAM_COUNTER, (int) getRegisterValue(RegisterType.PROGRAM_COUNTER) + 1); // PC++
 			});
 
 			add(() -> { // Decode
 				setRegister(RegisterType.MEMORY_DATA_REGISTER, getMemorySlotValue((int) getRegisterValue(RegisterType.MEMORY_ADDRESS_REGISTER))); // INS -> MDR
-				setRegister(RegisterType.CURRENT_INSTRUCTION_REGISTER, Instruction.fromCode((int)getRegisterValue(RegisterType.MEMORY_DATA_REGISTER))); // MDR -> CIR (split into opcode/operand)
+				setRegister(RegisterType.CURRENT_INSTRUCTION_REGISTER, Instruction.fromCode((int) getRegisterValue(RegisterType.MEMORY_DATA_REGISTER))); // MDR -> CIR (split into opcode/operand)
 
 			});
 
@@ -119,7 +125,6 @@ public abstract class AbstractProcessor implements Processor {
 			Instruction instruction = instructions[correctedI].getInstruction();
 			String label = instructions[correctedI].getLabel();
 			String parameter = instructions[correctedI].getParameter();
-
 
 			// init all the DAT instructions first, so that they can be used, even if they're not chronologically defined.
 			if (i < instructions.length) { // search only DAT
@@ -174,7 +179,7 @@ public abstract class AbstractProcessor implements Processor {
 
 	@Override
 	public void clearMemory() {
-		for(int i = 0; i < memorySize; i++) {
+		for (int i = 0; i < memorySize; i++) {
 			memory[i] = new MemorySlot(0);
 		}
 	}
@@ -244,6 +249,11 @@ public abstract class AbstractProcessor implements Processor {
 	}
 
 	@Override
+	public void clearInstructions() {
+		setInstructions(new ProcessorInstruction[0]);
+	}
+
+	@Override
 	public LMCReader getReader() {
 		return reader;
 	}
@@ -282,5 +292,6 @@ public abstract class AbstractProcessor implements Processor {
 	public void setHalting(boolean halting) {
 		this.halting = halting;
 	}
+
 
 }

@@ -15,11 +15,12 @@ public class ShellReader implements LMCReader {
 	public int nextInt() {
 		return nextInt("Input: ");
 	}
+
 	private int nextInt(String prompt) {
-		try{
+		try {
 			System.out.print(prompt);
 			return Integer.parseInt(scanner.nextLine());
-		}catch (NumberFormatException ignored) {
+		} catch (NumberFormatException ignored) {
 			return nextInt("Please enter an integer: ");
 		}
 	}

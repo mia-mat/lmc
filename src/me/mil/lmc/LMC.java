@@ -15,7 +15,7 @@ public class LMC {
 
 	public static void main(String[] args) throws Exception {
 		List<String> argsList = Arrays.asList(args);
-		if(argsList.contains(ARGUMENT_SHELL_START)) {
+		if (argsList.contains(ARGUMENT_SHELL_START)) {
 			startMinimal(argsList);
 			return;
 		}
@@ -27,13 +27,19 @@ public class LMC {
 		int clockSpeed = ShellInterface.DEFAULT_CLOCK_SPEED;
 		int memorySize = ShellInterface.DEFAULT_MEMORY_SIZE;
 
-		try{
-			if(args.contains(ARGUMENT_SHELL_CLOCK_SPEED)) clockSpeed = Integer.parseInt(args.get(args.lastIndexOf(ARGUMENT_SHELL_CLOCK_SPEED)+1));
-		}catch (NumberFormatException ignored) { System.out.println("Invalid clock speed, using default of " + clockSpeed); }
+		try {
+			if (args.contains(ARGUMENT_SHELL_CLOCK_SPEED))
+				clockSpeed = Integer.parseInt(args.get(args.lastIndexOf(ARGUMENT_SHELL_CLOCK_SPEED) + 1));
+		} catch (NumberFormatException ignored) {
+			System.out.println("Invalid clock speed, using default of " + clockSpeed);
+		}
 
-		try{
-			if(args.contains(ARGUMENT_SHELL_MEMORY_SIZE)) memorySize = Integer.parseInt(args.get(args.lastIndexOf(ARGUMENT_SHELL_MEMORY_SIZE)+1));
-		}catch (NumberFormatException ignored) { System.out.println("Invalid memory size, using default of " + memorySize); }
+		try {
+			if (args.contains(ARGUMENT_SHELL_MEMORY_SIZE))
+				memorySize = Integer.parseInt(args.get(args.lastIndexOf(ARGUMENT_SHELL_MEMORY_SIZE) + 1));
+		} catch (NumberFormatException ignored) {
+			System.out.println("Invalid memory size, using default of " + memorySize);
+		}
 
 		ShellInterface.create(clockSpeed, memorySize);
 	}

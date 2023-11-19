@@ -7,7 +7,7 @@ import me.mil.lmc.backend.exceptions.LMCCompilationException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class LMCProcessor extends AbstractObservableClockedProcessor{
+public class LMCProcessor extends AbstractObservableClockedProcessor {
 
 	private long instructionCycleCount;
 

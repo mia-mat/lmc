@@ -42,7 +42,7 @@ public final class OutputPanel extends LMCSubPanel {
 		new LMCProcessorObserver(getInterface()) {
 			@Override
 			public void onUpdate(Observable processor, ProcessorObserverNotification notification) {
-				if(notification.getType() == ProcessorObserverNotificationType.SET_HALTING && getInterface().getProcessor()!=null && getInterface().getProcessor().isHalting()) {
+				if (notification.getType() == ProcessorObserverNotificationType.SET_HALTING && getInterface().getProcessor() != null && getInterface().getProcessor().isHalting()) {
 					writeOutput("Program has finished executing.");
 					// Scroll to the bottom
 					SwingUtilities.invokeLater(() -> scrollPane.getViewport().setViewPosition(new Point(0, textArea.getDocument().getLength())));
@@ -56,7 +56,7 @@ public final class OutputPanel extends LMCSubPanel {
 	}
 
 	void writeOutput(String out) {
-		getOutputTextArea().setText(getOutputTextArea().getText()+out+"\n");
+		getOutputTextArea().setText(getOutputTextArea().getText() + out + "\n");
 	}
 
 	public void writeOutput(int out) {

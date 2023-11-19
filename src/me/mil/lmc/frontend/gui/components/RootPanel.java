@@ -4,7 +4,7 @@ import me.mil.lmc.frontend.gui.AbstractGraphicalInterface;
 
 import java.awt.*;
 
-public class RootPanel extends LMCPanel{
+public class RootPanel extends LMCPanel {
 
 	public RootPanel(AbstractGraphicalInterface lmcInterface) {
 		super(lmcInterface);

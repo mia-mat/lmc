@@ -7,7 +7,6 @@ public class LMCProcessorObserver extends ProcessorObserver {
 
 	public LMCProcessorObserver(AbstractGraphicalInterface lmcInterface) {
 		super(lmcInterface.getProcessor());
-		lmcInterface.addProcessorObserver(this);
 	}
 
 

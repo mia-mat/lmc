@@ -1,8 +1,11 @@
 package me.mil.lmc.frontend.gui.components;
 
-import me.mil.lmc.backend.*;
-import me.mil.lmc.frontend.gui.LMCProcessorObserver;
+import me.mil.lmc.backend.Processor;
+import me.mil.lmc.backend.ProcessorObserverNotification;
+import me.mil.lmc.backend.ProcessorObserverNotificationType;
+import me.mil.lmc.backend.RegisterType;
 import me.mil.lmc.frontend.gui.AbstractGraphicalInterface;
+import me.mil.lmc.frontend.gui.LMCProcessorObserver;
 import me.mil.lmc.frontend.gui.util.GBCBuilder;
 import me.mil.lmc.frontend.gui.util.InterfaceUtils;
 import me.mil.lmc.frontend.gui.util.StyleConstants;
@@ -84,7 +87,7 @@ public final class RegisterViewPanel extends LMCSubPanel {
 
 		registerObjects = new HashMap<>();
 		Arrays.stream(RegisterType.values()).forEach(type -> { // Generate a RegisterPanel for each RegisterType
-			if(!type.isDisplayed()) return;
+			if (!type.isDisplayed()) return;
 			RegisterPanel reg = new RegisterPanel(getInterface(), type);
 			add(reg);
 
@@ -92,16 +95,12 @@ public final class RegisterViewPanel extends LMCSubPanel {
 		});
 
 		new LMCProcessorObserver(getInterface()) {
-
 			@Override
 			public void onUpdate(Processor processor, ProcessorObserverNotification notification) {
-				if(notification.getType() == ProcessorObserverNotificationType.SET_REGISTER
-				|| notification.getType() == ProcessorObserverNotificationType.CLEAR_REGISTERS) {
-					SwingUtilities.invokeLater(() -> registerObjects.keySet().forEach(type -> registerObjects.get(type).setValueLabelText((int)processor.getRegisterValue(type))));
-
+				if (notification.getType() == ProcessorObserverNotificationType.SET_REGISTER
+						|| notification.getType() == ProcessorObserverNotificationType.CLEAR_REGISTERS) {
+					SwingUtilities.invokeLater(() -> registerObjects.keySet().forEach(type -> registerObjects.get(type).setValueLabelText((int) processor.getRegisterValue(type))));
 				}
-
-
 			}
 		};
 	}

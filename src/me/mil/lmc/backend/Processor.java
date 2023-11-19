@@ -35,7 +35,9 @@ public interface Processor {
 	Object getRegisterValue(RegisterType registerType);
 
 	void run();
+
 	void prepareRun();
+
 	void finalizeRun();
 
 	void loadInstructionsIntoMemory() throws LMCRuntimeException;
@@ -69,5 +71,7 @@ public interface Processor {
 	ProcessorInstruction[] getInstructions();
 
 	void setInstructions(ProcessorInstruction[] instructions);
+
+	void clearInstructions();
 
 }

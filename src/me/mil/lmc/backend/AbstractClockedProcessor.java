@@ -13,7 +13,7 @@ public abstract class AbstractClockedProcessor extends AbstractProcessor impleme
 	private int clockSpeed;
 	LinkedBlockingQueue<Runnable> runnableQueue;
 
-	private boolean currentlyRunningRunnable;
+	private boolean isCurrentlyRunningRunnable;
 
 	public AbstractClockedProcessor(ProcessorInstruction[] instructions, int memorySize, int clockSpeed, LMCReader reader, LMCWriter writer) {
 		super(instructions, memorySize, reader, writer);
@@ -40,12 +40,12 @@ public abstract class AbstractClockedProcessor extends AbstractProcessor impleme
 					performNextInstructionStep();
 				}
 
-				if (currentlyRunningRunnable) return;
+				if (isCurrentlyRunningRunnable) return;
 
 				if (!getRunnableQueue().isEmpty()) {
-					currentlyRunningRunnable = true;
+					isCurrentlyRunningRunnable = true;
 					runnableQueue.poll().run();
-					currentlyRunningRunnable = false;
+					isCurrentlyRunningRunnable = false;
 				}
 
 				this.cancel();

@@ -1,5 +1,7 @@
 package me.mil.lmc.frontend.gui;
 
+import me.mil.lmc.frontend.gui.util.DialogMessageType;
+
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.event.InputEvent;
@@ -37,12 +39,12 @@ public class LMCMenuBar {
 		itemSave.setAccelerator(KeyStroke.getKeyStroke('S', InputEvent.CTRL_DOWN_MASK));
 
 		itemSave.addActionListener((ignored) -> openFileChooser((file) -> {
-			if(!file.getPath().endsWith(".txt")) file = new File(file.getPath() + ".txt");
+			if (!file.getPath().endsWith(".txt")) file = new File(file.getPath() + ".txt");
 
 			try (FileWriter writer = new FileWriter(file)) {
 				writer.write(lmcInterface.getInputPanel().getText());
-			}catch (IOException e) {
-				e.printStackTrace();
+			} catch (IOException e) {
+				lmcInterface.showMessageDialog("Oops", "Unable to save file.", DialogMessageType.ERROR_MESSAGE);
 			}
 
 		}, FileChooserType.SAVE));
@@ -58,7 +60,7 @@ public class LMCMenuBar {
 			try {
 				lmcInterface.getInputPanel().getInputTextArea().setText(String.join("\n", Files.readAllLines(file.toPath(), StandardCharsets.UTF_8)));
 			} catch (IOException e) {
-				throw new RuntimeException(e);
+				lmcInterface.showMessageDialog("Oops", "Unable to load file.", DialogMessageType.ERROR_MESSAGE);
 			}
 		}, FileChooserType.OPEN));
 
@@ -69,7 +71,7 @@ public class LMCMenuBar {
 		JFileChooser jfc = new JFileChooser(System.getProperty("user.dir"));
 		jfc.setFileFilter(new FileNameExtensionFilter("Text File", "txt"));
 		int returnVal = (type == FileChooserType.SAVE) ? jfc.showSaveDialog(new JFrame()) : jfc.showOpenDialog(new JFrame());
-		if(returnVal == JFileChooser.APPROVE_OPTION) {
+		if (returnVal == JFileChooser.APPROVE_OPTION) {
 			action.accept(jfc.getSelectedFile());
 		}
 	}

@@ -13,18 +13,17 @@ public class ProcessorObserver<T extends Observable & Processor> implements Obse
 	}
 
 	public void setProcessor(T processor) {
-		if (this.processor != null)  this.processor.removeObserver(this);
+		if (this.processor != null) this.processor.removeObserver(this);
 		this.processor = processor;
 		if (processor != null) this.processor.addObserver(this);
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public void onUpdate(Observable caller, Object arg) {
 		try {
 			T ignored = ((T) caller); // Checking if caller instanceof T
 
-			if(arg instanceof ProcessorObserverNotification) {
+			if (arg instanceof ProcessorObserverNotification) {
 				onUpdate((T) caller, (ProcessorObserverNotification) arg);
 				onUpdate((Processor) caller, (ProcessorObserverNotification) arg);
 			}

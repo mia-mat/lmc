@@ -24,6 +24,7 @@ public class GBCBuilder {
 		LAST_LINE_END(GridBagConstraints.LAST_LINE_END);
 
 		private final int value;
+
 		Anchor(int value) {
 			this.value = value;
 		}
@@ -40,6 +41,7 @@ public class GBCBuilder {
 		VERTICAL(3);
 
 		private final int value;
+
 		Fill(int value) {
 			this.value = value;
 		}
@@ -121,7 +123,7 @@ public class GBCBuilder {
 		return this;
 	}
 
-	public GBCBuilder setInternalPaddingY(int ipadY){
+	public GBCBuilder setInternalPaddingY(int ipadY) {
 		gridBagConstraints.ipady = ipadY;
 		return this;
 	}
