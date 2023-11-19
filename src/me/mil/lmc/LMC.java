@@ -1,31 +1,47 @@
 package me.mil.lmc;
 
-import me.mil.lmc.backend.Program;
-import me.mil.lmc.backend.exceptions.LMCException;
+import me.mil.lmc.frontend.gui.util.InterfaceUtils;
+import me.mil.lmc.frontend.shell.ShellInterface;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.util.Scanner;
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
 
 public class LMC {
 
+	public static final String ARGUMENT_SHELL_START = "-minimal";
+	public static final String ARGUMENT_SHELL_CLOCK_SPEED = "-clock";
+	public static final String ARGUMENT_SHELL_MEMORY_SIZE = "-memory";
+
 	public static void main(String[] args) throws Exception {
-		while(true) {
-			System.out.println("Provide the directory of a LMC program (.txt) to execute.");
-			Scanner scanner = new Scanner(System.in);
-
-			Scanner fileScanner = new Scanner(new File(scanner.nextLine()));
-			StringBuilder str = new StringBuilder();
-			while(fileScanner.hasNext()) str.append(fileScanner.nextLine()).append("\n");
-
-			Program program = Program.loadFromString(str.toString());
-			program.run(100);
-
-			System.out.println("\n");
+		List<String> argsList = Arrays.asList(args);
+		if (argsList.contains(ARGUMENT_SHELL_START)) {
+			startMinimal(argsList);
+			return;
 		}
 
+		InterfaceUtils.createInterface();
+	}
 
+	private static void startMinimal(List<String> args) throws IOException {
+		int clockSpeed = ShellInterface.DEFAULT_CLOCK_SPEED;
+		int memorySize = ShellInterface.DEFAULT_MEMORY_SIZE;
 
+		try {
+			if (args.contains(ARGUMENT_SHELL_CLOCK_SPEED))
+				clockSpeed = Integer.parseInt(args.get(args.lastIndexOf(ARGUMENT_SHELL_CLOCK_SPEED) + 1));
+		} catch (NumberFormatException ignored) {
+			System.out.println("Invalid clock speed, using default of " + clockSpeed);
+		}
+
+		try {
+			if (args.contains(ARGUMENT_SHELL_MEMORY_SIZE))
+				memorySize = Integer.parseInt(args.get(args.lastIndexOf(ARGUMENT_SHELL_MEMORY_SIZE) + 1));
+		} catch (NumberFormatException ignored) {
+			System.out.println("Invalid memory size, using default of " + memorySize);
+		}
+
+		ShellInterface.create(clockSpeed, memorySize);
 	}
 
 }

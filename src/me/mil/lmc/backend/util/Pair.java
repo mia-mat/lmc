@@ -1,6 +1,6 @@
-package me.mil.lmc.backend;
+package me.mil.lmc.backend.util;
 
-public class Pair<A,B> {
+public class Pair<A, B> {
 	private A a;
 	private B b;
 
