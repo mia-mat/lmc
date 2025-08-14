@@ -1,0 +1,15 @@
+package me.mia.lmc.backend;
+
+public enum ProcessorObserverNotificationType {
+	SET_MEMORY,
+	CLEAR_MEMORY,
+	SET_MEMORY_SIZE,
+	SET_READER,
+	SET_REGISTER,
+	CLEAR_REGISTERS,
+	SET_WRITER,
+	SET_HALTING,
+	SET_RUNNING,
+	SET_INSTRUCTIONS,
+	LOAD_INTO_RAM
+}
